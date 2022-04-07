@@ -36,7 +36,7 @@ paths:
         default:
           description: "successful operation"
   /user/singin:
-    get:
+    post:
       tags:
         - "user"
       summary: "Logs user into the system"
@@ -69,7 +69,7 @@ paths:
         "400":
           description: "Invalid username/password supplied"
   /user/singout:
-    get:
+    post:
       tags:
         - "user"
       summary: "Logs out current logged in user session"
@@ -164,7 +164,6 @@ definitions:
   User:
     type: "object"
     required:
-      - "username"
       - "firstName"
       - "lastName"
       - "email"
@@ -173,8 +172,6 @@ definitions:
       id:
         type: "integer"
         format: "int64"
-      username:
-        type: "string"
       firstName:
         type: "string"
       lastName:
@@ -208,4 +205,3 @@ definitions:
       details:
         description: a (key, value) map.
         type: object
-

@@ -1,9 +1,8 @@
-package Bitirme
+package main
 
 import (
 	"fmt"
-	"github.com/gcamlicali/tradeshopExample/internal/category"
-	"github.com/gcamlicali/tradeshopExample/internal/product"
+	"github.com/gcamlicali/tradeshopExample/internal/auth"
 	"github.com/gcamlicali/tradeshopExample/pkg/config"
 	db "github.com/gcamlicali/tradeshopExample/pkg/database"
 	"github.com/gcamlicali/tradeshopExample/pkg/graceful"
@@ -17,7 +16,7 @@ import (
 )
 
 func main() {
-	log.Println("Book store service starting...")
+	log.Println("Trading cart service starting...")
 
 	// Set envs for local development
 	cfg, err := config.LoadConfig("./pkg/config/config-local")
@@ -62,21 +61,25 @@ func main() {
 
 	// Router group
 	rootRouter := r.Group(cfg.ServerConfig.RoutePrefix)
-	rootRouter.Use()
-	//authRooter := rootRouter.Group("/user")
-	productRouter := rootRouter.Group("/product")
-	categoryRouter := rootRouter.Group("/category")
+	authRooter := rootRouter.Group("/user")
+	//productRouter := rootRouter.Group("/product")
+	//categoryRouter := rootRouter.Group("/category")
 
-	// Product Repository
-	productRepo := product.NewProductRepository(DB)
-	productRepo.Migration()
-	product.NewProductHandler(productRouter, productRepo)
+	//// Product Repository
+	//productRepo := product.NewProductRepository(DB)
+	//productRepo.Migration()
+	//product.NewProductHandler(productRouter, productRepo)
 
-	// Product Repository
-	categoryRepo := category.NewProductRepository(DB)
-	categoryRepo.Migration()
+	// Category Repository
+	//categoryRepo := category.NewProductRepository(DB)
+	//categoryRepo.Migration()
 	//catogoryService(repo,handler)
 	//book.NewBookHandler(bookRouter, bookRepo)
+
+	authRepo := auth.NewAuthRepository(DB)
+	authRepo.Migration()
+	authRepo.FillAdminData()
+	auth.NewAuthHandler(authRooter, cfg, authRepo)
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

@@ -10,10 +10,10 @@ ServerConfig:
 
 JWTConfig:
   SessionTime: 3600
-  SecretKey: dummySecretKey
+  SecretKey: MarioCantFindPrincess
 
 DBConfig:
-  DataSourceName: postgres://deneme:deneme@localhost:5432/trade_cart? sslmode=disable
+  DataSourceName: postgres://deneme:deneme@localhost:5432/trade_cart?sslmode=disable
   Name: trade-cart
   MaxOpen: 50
   MaxIdle: 50

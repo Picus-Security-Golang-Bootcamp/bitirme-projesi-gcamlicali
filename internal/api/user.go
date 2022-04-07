@@ -43,10 +43,6 @@ type User struct {
 
 	// phone
 	Phone string `json:"phone,omitempty"`
-
-	// username
-	// Required: true
-	Username *string `json:"username"`
 }
 
 // Validate validates this user
@@ -66,10 +62,6 @@ func (m *User) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePassword(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateUsername(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -109,15 +101,6 @@ func (m *User) validateLastName(formats strfmt.Registry) error {
 func (m *User) validatePassword(formats strfmt.Registry) error {
 
 	if err := validate.Required("password", "body", m.Password); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *User) validateUsername(formats strfmt.Registry) error {
-
-	if err := validate.Required("username", "body", m.Username); err != nil {
 		return err
 	}
 
