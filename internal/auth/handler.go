@@ -22,7 +22,7 @@ type authHandler struct {
 	repo *AuthRepositoy
 }
 
-func NewAuthHandler(r *gin.RouterGroup, cfg *config.Config, repo *AuthRepositoy) {
+func NewAuthHandler(r *gin.RouterGroup, repo *AuthRepositoy, cfg *config.Config) {
 	a := authHandler{cfg: cfg, repo: repo}
 
 	r.POST("/signin", a.signin)
@@ -64,6 +64,7 @@ func (a *authHandler) signin(c *gin.Context) {
 		"exp":    time.Now().Add(24 * time.Hour).Unix(),
 		"roles":  user.IsAdmin,
 	})
+	log.Println("JWTClaims: ", jwtClaims)
 	token := jwtHelper.GenerateToken(jwtClaims, a.cfg.JWTConfig.SecretKey)
 	c.JSON(http.StatusOK, token)
 }

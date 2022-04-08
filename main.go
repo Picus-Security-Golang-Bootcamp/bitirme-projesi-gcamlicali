@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gcamlicali/tradeshopExample/internal/auth"
+	"github.com/gcamlicali/tradeshopExample/internal/category"
 	"github.com/gcamlicali/tradeshopExample/pkg/config"
 	db "github.com/gcamlicali/tradeshopExample/pkg/database"
 	"github.com/gcamlicali/tradeshopExample/pkg/graceful"
@@ -63,7 +64,7 @@ func main() {
 	rootRouter := r.Group(cfg.ServerConfig.RoutePrefix)
 	authRooter := rootRouter.Group("/user")
 	//productRouter := rootRouter.Group("/product")
-	//categoryRouter := rootRouter.Group("/category")
+	categoryRouter := rootRouter.Group("/category")
 
 	//// Product Repository
 	//productRepo := product.NewProductRepository(DB)
@@ -71,15 +72,15 @@ func main() {
 	//product.NewProductHandler(productRouter, productRepo)
 
 	// Category Repository
-	//categoryRepo := category.NewProductRepository(DB)
-	//categoryRepo.Migration()
+	categoryRepo := category.NewCategoryRepository(DB)
+	categoryRepo.Migration()
 	//catogoryService(repo,handler)
-	//book.NewBookHandler(bookRouter, bookRepo)
+	category.NewCategoryHandler(categoryRouter, categoryRepo, cfg)
 
 	authRepo := auth.NewAuthRepository(DB)
 	authRepo.Migration()
 	authRepo.FillAdminData()
-	auth.NewAuthHandler(authRooter, cfg, authRepo)
+	auth.NewAuthHandler(authRooter, authRepo, cfg)
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

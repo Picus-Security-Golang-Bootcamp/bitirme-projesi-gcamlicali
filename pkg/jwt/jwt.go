@@ -2,16 +2,17 @@ package jwt_helper
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/golang-jwt/jwt"
 )
 
 type DecodedToken struct {
-	Iat    int      `json:"iat"`
-	Roles  []string `json:"roles"`
-	UserId string   `json:"userId"`
-	Email  string   `json:"email"`
-	Iss    string   `json:"iss"`
+	Iat     int    `json:"iat"`
+	IsAdmin bool   `json:"roles"`
+	UserId  int    `json:"userId"`
+	Email   string `json:"email"`
+	Iss     string `json:"iss"`
 }
 
 func GenerateToken(claims *jwt.Token, secret string) string {
@@ -31,15 +32,16 @@ func VerifyToken(token string, secret string) *DecodedToken {
 	})
 
 	if err != nil {
+		log.Println("Decoded Hatasi: ", err)
 		return nil
 	}
 
 	if !decoded.Valid {
+		log.Println("Valid Hatasi")
 		return nil
 	}
 
 	decodedClaims := decoded.Claims.(jwt.MapClaims)
-
 	var decodedToken DecodedToken
 	jsonString, _ := json.Marshal(decodedClaims)
 	json.Unmarshal(jsonString, &decodedToken)

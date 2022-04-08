@@ -10,11 +10,11 @@ type CategoryRepositoy struct {
 	db *gorm.DB
 }
 
-func NewProductRepository(db *gorm.DB) *CategoryRepositoy {
+func NewCategoryRepository(db *gorm.DB) *CategoryRepositoy {
 	return &CategoryRepositoy{db: db}
 }
 
-func (r *CategoryRepositoy) create(a *models.Product) (*models.Product, error) {
+func (r *CategoryRepositoy) create(a *models.Category) (*models.Category, error) {
 	zap.L().Debug("category.repo.create", zap.Reflect("categoryBody", a))
 	if err := r.db.Create(a).Error; err != nil {
 		zap.L().Error("category.repo.Create failed to create category", zap.Error(err))
@@ -34,7 +34,7 @@ func (r *CategoryRepositoy) getByID(id string) (*models.Category, error) {
 	return category, nil
 }
 
-func (r *CategoryRepositoy) update(a *models.Product) (*models.Product, error) {
+func (r *CategoryRepositoy) update(a *models.Category) (*models.Category, error) {
 	zap.L().Debug("category.repo.update", zap.Reflect("category", a))
 
 	if result := r.db.Save(&a); result.Error != nil {
