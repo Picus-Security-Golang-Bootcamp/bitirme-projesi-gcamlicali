@@ -10,6 +10,7 @@ type Product struct {
 	SKU          string `gorm:"unique"`
 	Name         string
 	Description  string
+	Price        int32
 }
 
 func (Product) TableName() string {

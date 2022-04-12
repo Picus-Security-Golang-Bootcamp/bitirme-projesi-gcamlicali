@@ -11,8 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cast"
-	"log"
 	"net/http"
+	"strconv"
 )
 
 type productHandler struct {
@@ -60,7 +60,6 @@ func (p *productHandler) addBulk(c *gin.Context) {
 	for _, line := range record {
 		proEntity := models.Product{}
 		proEntity.CategoryName = line[0]
-		log.Println("line okundu 0. column: ", line[0])
 		_, err := p.catRepo.GetByName(proEntity.CategoryName)
 		if err != nil {
 			c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusNotFound, "Category not found", proEntity.CategoryName)))
@@ -69,6 +68,8 @@ func (p *productHandler) addBulk(c *gin.Context) {
 		proEntity.Name = line[1]
 		proEntity.SKU = line[2]
 		proEntity.Description = line[3]
+		price, _ := strconv.Atoi(line[4])
+		proEntity.Price = int32(price)
 
 		_, err = p.proRepo.create(&proEntity)
 		if err != nil {

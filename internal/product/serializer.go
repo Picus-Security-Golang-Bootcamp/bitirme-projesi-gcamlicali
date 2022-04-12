@@ -4,17 +4,16 @@ import (
 	"github.com/gcamlicali/tradeshopExample/internal/api"
 	"github.com/gcamlicali/tradeshopExample/internal/models"
 	"gorm.io/gorm"
-	"log"
 )
 
 //Data Transfer Object
 func ProductToResponse(p *models.Product) *api.Product {
 	//code
 	//code
-	log.Println("CategoryName: ", &p.CategoryName)
-	log.Println("ID: ", int64(p.ID))
-	log.Println("Sku: ", &p.SKU)
-	log.Println("Desc: ", p.Description)
+	//log.Println("CategoryName: ", &p.CategoryName)
+	//log.Println("ID: ", int64(p.ID))
+	//log.Println("Sku: ", &p.SKU)
+	//log.Println("Desc: ", p.Description)
 	return &api.Product{
 
 		CategoryName: &p.CategoryName,
@@ -22,6 +21,7 @@ func ProductToResponse(p *models.Product) *api.Product {
 		Sku:          &p.SKU,
 		Name:         &p.Name,
 		Description:  p.Description,
+		Price:        &p.Price,
 	}
 }
 

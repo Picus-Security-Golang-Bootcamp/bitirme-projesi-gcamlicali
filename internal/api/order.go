@@ -24,7 +24,7 @@ type Order struct {
 	ID int64 `json:"id,omitempty"`
 
 	// total price
-	TotalPrice int64 `json:"total_price,omitempty"`
+	TotalPrice int32 `json:"total_price,omitempty"`
 
 	// user id
 	UserID int64 `json:"user_id,omitempty"`

@@ -246,13 +246,14 @@ definitions:
         format: "int64"
       total_price:
         type: "integer"
-        format: "int64"
+        format: "int32"
   Product:
     type: "object"
     required:
       - "category_name"
       - "name"
       - "sku"
+      - "price"
     properties:
       id:
         type: "integer"
@@ -265,6 +266,9 @@ definitions:
         type: "string"
       description:
         type: "string"
+      price:
+        type: "integer"
+        format: "int32"
   User:
     type: "object"
     required:
