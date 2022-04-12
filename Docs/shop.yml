@@ -21,7 +21,7 @@ paths:
       tags:
         - "user"
       summary: "Create user"
-      description: "This can only be done by the logged in user."
+      description: "This can only be done by new user."
       operationId: "createUser"
       produces:
         - "application/json"
@@ -83,6 +83,112 @@ paths:
         default:
           description: "successful operation"
 
+  /product/:
+    get:
+      tags:
+        - "product"
+      summary: "List all products"
+      description: ""
+      operationId: "getProducts"
+      produces:
+        - "application/json"
+      parameters: [ ]
+      responses:
+        "200":
+          description: "successful operation"
+
+          schema:
+            $ref: "#/definitions/Product"
+  /product/add/singleItem:
+    post:
+      tags:
+        - "product"
+      summary: "Add a product"
+      description: ""
+      operationId: "addSingleProduct"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        "200":
+          description: "successful operation"
+
+  /product/add/bulkItems:
+    post:
+      tags:
+        - "product"
+      summary: "Add bulk products"
+      description: "Add from csv file"
+      operationId: "addBulkProducts"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        "200":
+          description: "successful operation"
+  /category/:
+    get:
+      tags:
+        - "category"
+      summary: "List all categories"
+      description: ""
+      operationId: "getCategories"
+      produces:
+        - "application/json"
+      parameters: [ ]
+      responses:
+        "200":
+          description: "successful operation"
+
+          schema:
+            $ref: "#/definitions/Category"
+  /category/add/singleItem:
+    post:
+      tags:
+        - "category"
+      summary: "Add a category"
+      description: ""
+      operationId: "addSingleCategory"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/Category"
+      responses:
+        "200":
+          description: "successful operation"
+
+  /category/add/bulkItems:
+    post:
+      tags:
+        - "category"
+      summary: "Add bulk categories"
+      description: "Add from csv file"
+      operationId: "addBulkCategories"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/Category"
+      responses:
+        "200":
+          description: "successful operation"
 
 definitions:
   Cart:
