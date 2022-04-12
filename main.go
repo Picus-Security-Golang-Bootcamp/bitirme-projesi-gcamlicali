@@ -76,7 +76,7 @@ func main() {
 	//// Product Repository
 	productRepo := product.NewProductRepository(DB)
 	productRepo.Migration()
-	product.NewProductHandler(productRouter, productRepo, categoryRepo)
+	product.NewProductHandler(productRouter, productRepo, categoryRepo, cfg)
 
 	authRepo := auth.NewAuthRepository(DB)
 	authRepo.Migration()

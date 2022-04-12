@@ -5,9 +5,12 @@ import (
 	category "github.com/gcamlicali/tradeshopExample/internal/category"
 	httpErr "github.com/gcamlicali/tradeshopExample/internal/httpErrors"
 	"github.com/gcamlicali/tradeshopExample/internal/models"
+	"github.com/gcamlicali/tradeshopExample/pkg/config"
 	"github.com/gcamlicali/tradeshopExample/pkg/csv"
+	mw "github.com/gcamlicali/tradeshopExample/pkg/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/go-openapi/strfmt"
+	"github.com/spf13/cast"
 	"log"
 	"net/http"
 )
@@ -17,17 +20,28 @@ type productHandler struct {
 	catRepo *category.CategoryRepositoy
 }
 
-func NewProductHandler(r *gin.RouterGroup, proRepo *ProductRepositoy, catRepo *category.CategoryRepositoy) {
+func NewProductHandler(r *gin.RouterGroup, proRepo *ProductRepositoy, catRepo *category.CategoryRepositoy, cfg *config.Config) {
 	h := &productHandler{proRepo: proRepo, catRepo: catRepo}
 
 	r.GET("/", h.getAll)
 	addRoute := r.Group("/add")
+	addRoute.Use(mw.AuthMiddleware(cfg.JWTConfig.SecretKey))
 	addRoute.POST("/bulkItems", h.addBulk)
 	addRoute.POST("/singleItem", h.addSingle)
 }
 
 func (p *productHandler) addBulk(c *gin.Context) {
+	adminInterface, isExist := c.Get("isAdmin")
+	if !isExist {
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "Admin not found", nil)))
+		return
+	}
 
+	isAdmin := cast.ToBool(adminInterface)
+	if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to use this endpoint!"})
+		return
+	}
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "Can not request body", nil)))
@@ -68,6 +82,17 @@ func (p *productHandler) addBulk(c *gin.Context) {
 }
 
 func (p *productHandler) addSingle(c *gin.Context) {
+	adminInterface, isExist := c.Get("isAdmin")
+	if !isExist {
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "Admin not found", nil)))
+		return
+	}
+
+	isAdmin := cast.ToBool(adminInterface)
+	if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to use this endpoint!"})
+		return
+	}
 	productBody := &api.Product{}
 	if err := c.Bind(&productBody); err != nil {
 		c.JSON(httpErr.ErrorResponse(httpErr.CannotBindGivenData))
