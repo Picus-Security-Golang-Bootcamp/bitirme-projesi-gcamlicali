@@ -2,8 +2,6 @@ package jwt_helper
 
 import (
 	"encoding/json"
-	"log"
-
 	"github.com/golang-jwt/jwt"
 )
 
@@ -23,7 +21,7 @@ func GenerateToken(claims *jwt.Token, secret string) string {
 	return token
 }
 
-func VerifyToken(token string, secret string) *DecodedToken {
+func VerifyToken(token string, secret string) (*DecodedToken, error) {
 	hmacSecretString := secret
 	hmacSecret := []byte(hmacSecretString)
 
@@ -32,13 +30,11 @@ func VerifyToken(token string, secret string) *DecodedToken {
 	})
 
 	if err != nil {
-		log.Println("Decoded Hatasi: ", err)
-		return nil
+		return nil, err
 	}
 
 	if !decoded.Valid {
-		log.Println("Valid Hatasi")
-		return nil
+		return nil, err
 	}
 
 	decodedClaims := decoded.Claims.(jwt.MapClaims)
@@ -46,5 +42,5 @@ func VerifyToken(token string, secret string) *DecodedToken {
 	jsonString, _ := json.Marshal(decodedClaims)
 	json.Unmarshal(jsonString, &decodedToken)
 
-	return &decodedToken
+	return &decodedToken, nil
 }

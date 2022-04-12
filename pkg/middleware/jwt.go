@@ -3,14 +3,13 @@ package mw
 import (
 	jwtHelper "github.com/gcamlicali/tradeshopExample/pkg/jwt"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
 func AuthMiddleware(secretKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.GetHeader("Authorization") != "" {
-			decodedClaims := jwtHelper.VerifyToken(c.GetHeader("Authorization"), secretKey)
+			decodedClaims, err := jwtHelper.VerifyToken(c.GetHeader("Authorization"), secretKey)
 			//if decodedClaims != nil {
 			//	for _, role := range decodedClaims.Roles {
 			//		if role == "admin" {
@@ -21,7 +20,7 @@ func AuthMiddleware(secretKey string) gin.HandlerFunc {
 			//	}
 			//}
 			if decodedClaims == nil {
-				log.Println("Bos Decoded")
+				c.JSON(http.StatusUnauthorized, gin.H{"Authorization error": err.Error()})
 				c.Abort()
 				return
 			}
@@ -29,9 +28,8 @@ func AuthMiddleware(secretKey string) gin.HandlerFunc {
 			c.Set("isAdmin", decodedClaims.IsAdmin)
 			c.Next()
 		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized!"})
+			c.JSON(http.StatusUnauthorized, gin.H{"Authorization error": "You are not authorized!"})
 		}
-		//log.Println("Aborta geldi")
 		c.Abort()
 		return
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gcamlicali/tradeshopExample/internal/auth"
 	"github.com/gcamlicali/tradeshopExample/internal/category"
+	"github.com/gcamlicali/tradeshopExample/internal/product"
 	"github.com/gcamlicali/tradeshopExample/pkg/config"
 	db "github.com/gcamlicali/tradeshopExample/pkg/database"
 	"github.com/gcamlicali/tradeshopExample/pkg/graceful"
@@ -63,19 +64,19 @@ func main() {
 	// Router group
 	rootRouter := r.Group(cfg.ServerConfig.RoutePrefix)
 	authRooter := rootRouter.Group("/user")
-	//productRouter := rootRouter.Group("/product")
+	productRouter := rootRouter.Group("/product")
 	categoryRouter := rootRouter.Group("/category")
-
-	//// Product Repository
-	//productRepo := product.NewProductRepository(DB)
-	//productRepo.Migration()
-	//product.NewProductHandler(productRouter, productRepo)
 
 	// Category Repository
 	categoryRepo := category.NewCategoryRepository(DB)
 	categoryRepo.Migration()
-	//catogoryService(repo,handler)
-	category.NewCategoryHandler(categoryRouter, categoryRepo, cfg)
+	categoryService := category.NewCategoryService(*categoryRepo)
+	category.NewCategoryHandler(categoryRouter, categoryService, cfg)
+
+	//// Product Repository
+	productRepo := product.NewProductRepository(DB)
+	productRepo.Migration()
+	product.NewProductHandler(productRouter, productRepo, categoryRepo)
 
 	authRepo := auth.NewAuthRepository(DB)
 	authRepo.Migration()

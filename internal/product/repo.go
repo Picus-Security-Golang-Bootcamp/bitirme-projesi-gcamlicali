@@ -27,7 +27,6 @@ func (r *ProductRepositoy) getAll() (*[]models.Product, error) {
 	zap.L().Debug("product.repo.getAll")
 
 	var ps = &[]models.Product{}
-	//if err := r.db.Preload("Author").Find(&bs).Error; err != nil {
 	if err := r.db.Find(&ps).Error; err != nil {
 		zap.L().Error("product.repo.getAll failed to get products", zap.Error(err))
 		return nil, err

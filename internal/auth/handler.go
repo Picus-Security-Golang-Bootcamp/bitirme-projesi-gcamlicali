@@ -77,7 +77,7 @@ func (a *authHandler) signup(c *gin.Context) {
 		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "check your request body", nil)))
 		return
 	}
-	log.Println(reqUser)
+
 	if err := reqUser.Validate(strfmt.NewFormats()); err != nil {
 		c.JSON(httpErr.ErrorResponse(err))
 		return

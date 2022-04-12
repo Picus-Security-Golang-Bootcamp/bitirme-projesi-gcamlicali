@@ -1,0 +1,105 @@
+Cep Telefonu;iPhone 11;1000001;Apple iPhone 11 iOS 64GB
+Cep Telefonu;iphone 12;1000002;Apple iPhone 12 iOS 64GB
+Cep Telefonu;TCL L7;1000003;TCL Dandik telefon Android 32GB
+Cep Telefonu;Redmi 9c;1000004;Xiaomi az dandik telefon Android 32GB
+Cep Telefonu;C25S;1000005;Realme Dandik telefon Android 128GB
+Cep Telefonu;Galaxy M32;1000006;Samsung Telefon Android 128GB
+Cep Telefonu;Galaxy S20;1000007;Samsung Telefon Android FE 128GB
+Cep Telefonu;B9360;1000008;Blackberry Tuslu
+Cep Telefonu;P40;1000009;Huawei Telefon HarmonyOS 64GB
+Cep Telefonu;GM21;1000010;General Mobile Telefon Android 64GB
+Cep Telefonu;Poco X3;1000011;POCO Telefon Android 32GB
+Cep Telefonu;P50;1000012;Huawei Telefon HarmonyOS 256GB
+Cep Telefonu;A74;1000013;Oppo Telefon Andorid 128GB
+Cep Telefonu;K41S;1000014;LG Telefon Android 64GB
+Cep Telefonu;GM8;1000015;general Mobile Telefon Android 32GB
+Notebook;D15;2000001;Huawei i7 16GB Ram 512GB SSD W11
+Notebook;ideaPad3;2000002;Lenovo AMD  R5 8GB Ram 512GB SSD W11
+Notebook;15DA2033NT;2000003;HP i5 4GB Ram  256GB SSD W10
+Notebook;G515;2000004;Dell AMD R7 16GB Ram 512GB SSD W11
+Notebook;V15;2000005;Lenovo i5 8GB Ram 256GB SSD W10
+Notebook;G15;2000006;Dell i7 16GB Ram 512GB SSD W11
+Notebook;X515JA;2000007;Asus i3 4GB Ram 512GB HDD FreeDOS
+Notebook;G770;2000008;Casper i5 8GB Ram 500GB SSD W11
+Notebook;D14;2000009;Huawei i5 8GB Ram 512GB SSD W10
+Notebook;AN517;2000010;Acer i5 16GB Ram 512GB SSD Linux
+Notebook;G513IH;2000011;Asus AMD R5 16GB Ram 512GB SSD W11
+Notebook;DW3055NT;2000012;HP i5 8GB Ram  256GB SSD W10
+Notebook;A11MU;2000013;MSI i5 8GB Ram 256GB SSD FreeDOS
+Notebook;FX516PM;2000014;Asus i7 32GB Ram 1TB SSD W11
+Notebook;ideaPad5;2000015;Lenovo i5 8GB Ram 256GB SSD W10
+Tablet;iPad Air5;3000001;Apple 10inc ekran 64GB Wifi Pembe
+Tablet;Via S48;3000002;Casper 8 ekran 32GB IPS
+Tablet;Tab M10;3000003;Lenovo 10inc ekran 64FB IPS
+Tablet;Matepad10;3000004;Huawei 10inc ekran 128GB FHD Mavi 
+Tablet;GalaxyTAB7;3000005;Samsung 10inc ekran 32GB
+Tablet;GalaxyS6;3000006;Samsung 10inc ekran 64GB Mavi
+Tablet;Via S340;3000007;Casper 10inc ekran  64GB Siyah
+Tablet;V Tab Z1;3000008;Vestel Dandik 
+Tablet;1T;3000009;Alcatel 10inc ekran 32GB IPS
+Tablet;M10;3000010;Lenovo 10inc ekran 64GB IPS
+Tablet;TB001;3000011;Soultech 7inc ekran 32GB
+Tablet;iPad Pro;3000012;Apple 13inc ekran 256GB Wifi Gri
+Tablet;X505F;3000013;Lenovo 10inc ekran 16GB WiFi
+Tablet;Alfa10TB;3000014;Hometech 10inc ekran 64 GB Klavyeli
+Tablet;iPad Air3;3000015;Apple 11inc ekran 128GB Wifi
+Yazici;3YW73A;4000001;HP Laser  Wifi Fotokopi Tarama
+Yazici;L3210;4000002;Epson Murekkep puskurtme
+Yazici;7KW56W;4000003;HP Renkli Tarama Fotokopi 
+Yazici;G1411;4000004;Canon  Renkli Murekkep tankli
+Yazici;L5290;4000005;Epson Wifi Renkli Tankli 
+Yazici;137FNW;4000006;Hp Allinone
+Yazici;E3440;4000007;Canon  Wifi Renkli Murekkep tankli
+Yazici;G3415;4000008;Canon Wifi Mobil Baski
+Yazici;9FY94A;4000009;HP Cok Fonksiyonlu Laser
+Yazici;Pro8023;4000010;HP officeJet All in one
+Yazici;L1210;4000011;Epson Murekkep tankli 
+Yazici;L3266;4000012;Epson Wifi Tarayici Fotokopi
+Yazici;M211d;4000013;HP Laser Cift Tarafli
+Yazici;L3256;4000014;Epson Ecotank Fotokopi Tarama
+Yazici;DJ2721;4000015;Hp All in One
+Projeksiyon;XR757;5000001;NUO 2800Lumen 1280x720 LED
+Projeksiyon;EF12;5000002;Epson FullHD Lazer Android
+Projeksiyon;TW7000;5000003;Epson 4K
+Projeksiyon;PA503X;5000004;Viewsonic 3800 AnsiLumen 1024*768 DLP
+Projeksiyon;TD90;5000005;Thundeal 2800 Lumen 720P
+Projeksiyon;M2E;5000006;Viewsonic 720P LED
+Projeksiyon;UHD35;5000007;Optoma  4K 3600 Lumen 
+Projeksiyon;SD150;5000008;Owlenz 2500 Ansilumen 720P
+Projeksiyon;VP13;5000009;Blitzwolf 1080P 6000 Ansilumen
+Projeksiyon;E500S;5000010;HZL 1000Ansilumen FullHD
+Projeksiyon;PH510PG;5000011;LG 720P 550 Ansilumen
+Projeksiyon;W371E;5000012;Optoma 720P  3800Lumen DLP
+Projeksiyon;RD805B;5000013;Bluecat 1200lumen 720P Wifi
+Projeksiyon;MH560;5000014;BenQ 3800Ansilumen FullHD 3D
+Projeksiyon;X1123H;5000015;Acer 3600Ansilumen 800x600 3D
+Televizyon;43AU7000;6000001;Samsung 108 Ekran 4K LED Uydulu
+Televizyon;OV43250;6000002;Onvo 109 Ekran FullHD Android LED
+Televizyon;A2058;6000003;Awox 146 Ekran 4K  AndroidLED
+Televizyon;55UA9600;6000004;Vestel 139 Ekran 4K Adnroid LED
+Televizyon;55NANO756;6000005;LG 140 Ekran 4K LED Uydulu
+Televizyon;55AU7200;6000006;Samsung 139 Ekran 4K LED Uydulu
+Televizyon;55C14LB;6000007;LG 139 Ekran 4K OLED uydulu
+Televizyon;55Q70A;6000008;Samsung 139 Ekran 4K LED Uydulu
+Televizyon;50PUS7906;6000009;Philips 126 Ekran 4K Andorid LED
+Televizyon;AX32DAB04;6000010;Axen 80 Ekran Uydulu HDReady LED
+Televizyon;50GEU7830;6000011;Grundig 127 Ekran 4K LED Uydulu
+Televizyon;48C14LB;6000012;LG 122 Ekran 4K OLED uydulu
+Televizyon;65U9600;6000013;Vestel 164 Ekran 4K LED uydulu
+Televizyon;65Q70A;6000014;Samsung 165 Ekran 4K QLED uydulu
+Televizyon;XR77A80J;6000015;Sony 195 Ekran 4K Andorid LED Uydulu
+Buzdolabi;NF48001;7000001;Vestel Nofrost Beyaz
+Buzdolabi;RT46K6000;7000002;Samsung NoFrost Beyaz
+Buzdolabi;ALK471;7000003;Altus Nofrost 571 LT Beyaz
+Buzdolabi;GRNE5051;7000004;Grundig Duo NoFrost Beyaz
+Buzdolabi;NF45010;7000005;Regal 402 LT NoFrost Beyaz
+Buzdolabi;DBD500;7000006;Dijitsu 510LT NoFrost inox 
+Buzdolabi;STW2501;7000007;SEG Statik Dandik
+Buzdolabi;BD2155WF;7000008;Profilo 453 Nofrost Beyaz
+Buzdolabi;GKND5600;7000009;Grundig 514 LT Nofrost inox
+Buzdolabi;SB14201;7000010;Vestel Retro Kirmizi
+Buzdolabi;154140MB;7000011;Arcelik Buro Tipi
+Buzdolabi;KGN86AWF;7000012;Bosch NoFrost Beyaz
+Buzdolabi;KGN86AFN;7000013;Bosch  682LT NoFrost inox
+Buzdolabi;B569NLHZ;7000014;Lg 499 LT NoFrost inox
+Buzdolabi;RF85A912A;7000015;Samsung Triple Cooling

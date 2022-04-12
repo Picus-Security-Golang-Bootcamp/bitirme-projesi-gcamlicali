@@ -19,9 +19,9 @@ import (
 // swagger:model Product
 type Product struct {
 
-	// category
+	// category name
 	// Required: true
-	Category *Category `json:"category"`
+	CategoryName *string `json:"category_name"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -35,14 +35,14 @@ type Product struct {
 
 	// sku
 	// Required: true
-	Sku *int64 `json:"sku"`
+	Sku *string `json:"sku"`
 }
 
 // Validate validates this product
 func (m *Product) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateCategory(formats); err != nil {
+	if err := m.validateCategoryName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -60,21 +60,10 @@ func (m *Product) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Product) validateCategory(formats strfmt.Registry) error {
+func (m *Product) validateCategoryName(formats strfmt.Registry) error {
 
-	if err := validate.Required("category", "body", m.Category); err != nil {
+	if err := validate.Required("category_name", "body", m.CategoryName); err != nil {
 		return err
-	}
-
-	if m.Category != nil {
-		if err := m.Category.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("category")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("category")
-			}
-			return err
-		}
 	}
 
 	return nil
@@ -98,33 +87,8 @@ func (m *Product) validateSku(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this product based on the context it is used
+// ContextValidate validates this product based on context it is used
 func (m *Product) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateCategory(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *Product) contextValidateCategory(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Category != nil {
-		if err := m.Category.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("category")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("category")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
