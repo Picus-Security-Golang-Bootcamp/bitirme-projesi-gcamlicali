@@ -86,7 +86,8 @@ func main() {
 	authRepo := auth.NewAuthRepository(DB)
 	authRepo.Migration()
 	authRepo.FillAdminData()
-	auth.NewAuthHandler(authRooter, authRepo, cfg)
+	authService := auth.NewAuthService(*authRepo, cfg)
+	auth.NewAuthHandler(authRooter, authService)
 
 	cartItemRepo := cart_item.NewCartItemRepository(DB)
 	cartItemRepo.Migration()

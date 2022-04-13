@@ -26,10 +26,6 @@ type Service interface {
 }
 
 func NewCategoryService(repo CategoryRepositoy) Service {
-	//if repo == nil {
-	//	return nil
-	//}
-
 	return &categoryService{repo: repo}
 }
 
