@@ -29,7 +29,7 @@ func (r *CartRepositoy) GetByUserID(userID int) (*models.Cart, error) {
 
 	var cart = &models.Cart{}
 
-	err := r.db.Table("cart").Preload("CartItems").Where(&models.Cart{UserID: userID, IsOrdered: false}).First(&cart).Error
+	err := r.db.Table("cart").Preload("CartItems").Preload("CartItems.Product").Where(&models.Cart{UserID: userID, IsOrdered: false}).First(&cart).Error
 	//err := r.db.Preload("CartItems").Where("user_id =?", userID).First(&cart).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		cart.UserID = userID
@@ -46,6 +46,17 @@ func (r *CartRepositoy) GetByUserID(userID int) (*models.Cart, error) {
 
 	}
 	return cart, nil
+}
+
+func (r *CartRepositoy) Update(a *models.Cart) (*models.Cart, error) {
+
+	zap.L().Debug("cart.repo.update", zap.Reflect("cartBody", a))
+
+	if result := r.db.Save(&a); result.Error != nil {
+		return nil, result.Error
+	}
+
+	return a, nil
 }
 
 func (r *CartRepositoy) Migration() {

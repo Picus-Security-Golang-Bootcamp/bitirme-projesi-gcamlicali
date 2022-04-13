@@ -39,18 +39,18 @@ func (r *ProductRepositoy) getAll(pageIndex, pageSize int) (*[]models.Product, i
 	return ps, int(count), nil
 }
 
-func (r *ProductRepositoy) getByID(id string) (*models.Product, error) {
+func (r *ProductRepositoy) GetByID(id string) (*models.Product, error) {
 	zap.L().Debug("product.repo.getByID", zap.Reflect("id", id))
 
 	var product = &models.Product{}
-	if result := r.db.Preload("Products").First(&product, id); result.Error != nil {
+	if result := r.db.First(&product, id); result.Error != nil {
 		return nil, result.Error
 	}
 
 	return product, nil
 }
 
-func (r *ProductRepositoy) update(a *models.Product) (*models.Product, error) {
+func (r *ProductRepositoy) Update(a *models.Product) (*models.Product, error) {
 	zap.L().Debug("product.repo.update", zap.Reflect("product", a))
 
 	if result := r.db.Save(&a); result.Error != nil {
@@ -63,7 +63,7 @@ func (r *ProductRepositoy) update(a *models.Product) (*models.Product, error) {
 func (r *ProductRepositoy) delete(id string) error {
 	zap.L().Debug("product.repo.delete", zap.Reflect("id", id))
 
-	product, err := r.getByID(id)
+	product, err := r.GetByID(id)
 	if err != nil {
 		return err
 	}

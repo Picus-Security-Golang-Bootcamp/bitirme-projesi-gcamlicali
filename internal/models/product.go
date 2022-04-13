@@ -11,7 +11,6 @@ type Product struct {
 	Name         string
 	Description  string
 	Price        int32
-	CartitemID   int
 }
 
 func (Product) TableName() string {

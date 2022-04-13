@@ -1,0 +1,291 @@
+{
+	"info": {
+		"_postman_id": "f345c331-1dfd-4d7e-953f-de78a27b7887",
+		"name": "GoPatikaProject",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/product/?page=1&pageSize=10",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"product",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a Item",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"category_name\":\"Cep Telefonu\",\r\n    \"description\":\"Garip urun\",\r\n    \"name\":\"Ayfon49\",\r\n    \"sku\":444331\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/product/signed/singleItem",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"product",
+								"signed",
+								"singleItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Bulk",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTY0OTg5MTA4MCwiaWF0IjoxNjQ5ODA0NjgwLCJpc3MiOiIiLCJyb2xlcyI6dHJ1ZSwidXNlcklkIjoxfQ.eqBq2X22Dd2ecqEXMus-ETC2okbSdjtKu2ISxJzrvFE",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/Tole/Desktop/Calisma/bitirme-projesi-gcamlicali/Docs/Products.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/product/signed/bulkItems",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"product",
+								"signed",
+								"bulkItems"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"deneme@deneme.com\",\r\n    \"firstName\": \"adim\",\r\n    \"lastName\": \"soyadim\",\r\n    \"password\": \"12345\",\r\n    \"userName\": \"gereksiz\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/user/signup",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/user/signin",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"user",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Add Bulk",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTY0OTUwMDU0MiwiaWF0IjoxNjQ5NDE0MTQyLCJpc3MiOiIiLCJyb2xlcyI6dHJ1ZSwidXNlcklkIjoxfQ.NZ1iR7zml8RaMmHWVsI0_Zcbv2jv0q5KdI74RT2Cag8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/Tole/Desktop/Calisma/bitirme-projesi-gcamlicali/Docs/Catergories.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/category/signed/bulkItems",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"category",
+								"signed",
+								"bulkItems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/category",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTY0OTg4MTE4NSwiaWF0IjoxNjQ5Nzk0Nzg1LCJpc3MiOiIiLCJyb2xlcyI6dHJ1ZSwidXNlcklkIjoxfQ.2xHCdbd5SlwA3whC8qVRPoYG40LOfRqcf0oueL2ncWo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Utu\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/category/signed/singleItem",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"category",
+								"signed",
+								"singleItem"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "[{\"key\":\"Authorization\",\"value\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTY0OTkzNTA3MSwiaWF0IjoxNjQ5ODQ4NjcxLCJpc3MiOiIiLCJyb2xlcyI6dHJ1ZSwidXNlcklkIjoxfQ.f2hfwctXQDS6VM4C4iWYbOjAWHtZhvNgsP5_EZ9y1EU\",\"description\":\"\",\"type\":\"text\",\"enabled\":true}]",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/cart/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								"1"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

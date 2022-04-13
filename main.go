@@ -95,7 +95,7 @@ func main() {
 
 	cartRepo := cart.NewCartRepository(DB)
 	cartRepo.Migration()
-	cart.NewCartHandler(cartRouter, cartRepo)
+	cart.NewCartHandler(cartRouter, cartRepo, cartItemRepo, productRepo)
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
