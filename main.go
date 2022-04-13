@@ -3,12 +3,15 @@ package main
 import (
 	"fmt"
 	"github.com/gcamlicali/tradeshopExample/internal/auth"
+	"github.com/gcamlicali/tradeshopExample/internal/cart"
+	"github.com/gcamlicali/tradeshopExample/internal/cart_item"
 	"github.com/gcamlicali/tradeshopExample/internal/category"
 	"github.com/gcamlicali/tradeshopExample/internal/product"
 	"github.com/gcamlicali/tradeshopExample/pkg/config"
 	db "github.com/gcamlicali/tradeshopExample/pkg/database"
 	"github.com/gcamlicali/tradeshopExample/pkg/graceful"
 	logger "github.com/gcamlicali/tradeshopExample/pkg/logging"
+	mw "github.com/gcamlicali/tradeshopExample/pkg/middleware"
 
 	"github.com/gin-gonic/gin"
 
@@ -66,6 +69,8 @@ func main() {
 	authRooter := rootRouter.Group("/user")
 	productRouter := rootRouter.Group("/product")
 	categoryRouter := rootRouter.Group("/category")
+	cartRouter := rootRouter.Group("/cart")
+	cartRouter.Use(mw.AuthMiddleware(cfg.JWTConfig.SecretKey))
 
 	// Category Repository
 	categoryRepo := category.NewCategoryRepository(DB)
@@ -82,6 +87,15 @@ func main() {
 	authRepo.Migration()
 	authRepo.FillAdminData()
 	auth.NewAuthHandler(authRooter, authRepo, cfg)
+
+	cartItemRepo := cart_item.NewCartItemRepository(DB)
+	cartItemRepo.Migration()
+	//itemRepo := item.NewItemRepository(DB)
+	//itemRepo.Migration()
+
+	cartRepo := cart.NewCartRepository(DB)
+	cartRepo.Migration()
+	cart.NewCartHandler(cartRouter, cartRepo)
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

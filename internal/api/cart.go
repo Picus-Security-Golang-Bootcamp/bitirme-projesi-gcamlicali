@@ -7,7 +7,9 @@ package api
 
 import (
 	"context"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -17,20 +19,84 @@ import (
 // swagger:model Cart
 type Cart struct {
 
+	// cart items
+	CartItems []*CartItem `json:"cart_items"`
+
 	// id
 	ID int64 `json:"id,omitempty"`
-
-	// user id
-	UserID int64 `json:"user_id,omitempty"`
 }
 
 // Validate validates this cart
 func (m *Cart) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateCartItems(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this cart based on context it is used
+func (m *Cart) validateCartItems(formats strfmt.Registry) error {
+	if swag.IsZero(m.CartItems) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.CartItems); i++ {
+		if swag.IsZero(m.CartItems[i]) { // not required
+			continue
+		}
+
+		if m.CartItems[i] != nil {
+			if err := m.CartItems[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("cart_items" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("cart_items" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this cart based on the context it is used
 func (m *Cart) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCartItems(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Cart) contextValidateCartItems(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.CartItems); i++ {
+
+		if m.CartItems[i] != nil {
+			if err := m.CartItems[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("cart_items" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("cart_items" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

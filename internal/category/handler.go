@@ -20,10 +20,13 @@ func NewCategoryHandler(r *gin.RouterGroup, service Service, cfg *config.Config)
 	a := categoryHandler{service: service}
 
 	r.GET("/", a.getAll)
-	addRoute := r.Group("/add")
-	addRoute.Use(mw.AuthMiddleware(cfg.JWTConfig.SecretKey))
-	addRoute.POST("/bulkItems", a.addBulk)
-	addRoute.POST("/singleItem", a.addSingle)
+
+	signedRoute := r.Group("/signed")
+	signedRoute.Use(mw.AuthMiddleware(cfg.JWTConfig.SecretKey))
+	signedRoute.DELETE("/", a.delete)
+	signedRoute.PUT("/", a.update)
+	signedRoute.POST("/addBulk", a.addBulk)
+	signedRoute.POST("/addSingle", a.addSingle)
 }
 
 func (h *categoryHandler) getAll(c *gin.Context) {
@@ -65,20 +68,7 @@ func (h *categoryHandler) addBulk(c *gin.Context) {
 		c.JSON(httpErr.ErrorResponse(err))
 		return
 	}
-	//record, err := csvRead.ReadFile(file)
-	//if err != nil {
-	//	c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusInternalServerError, "Can not read csv file", nil)))
-	//	return
-	//}
-	//
-	//for _, line := range record {
-	//	catEntity := models.Category{}
-	//	catEntity.Name = &line[0]
-	//	_, err = h.service.Create(&catEntity)
-	//	if err != nil {
-	//		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, err.Error(), nil)))
-	//	}
-	//}
+
 	c.JSON(http.StatusCreated, "Categories uploaded and created")
 	return
 }
@@ -107,13 +97,6 @@ func (h *categoryHandler) addSingle(c *gin.Context) {
 		return
 	}
 
-	//dbCat := models.Category{}
-	//dbCat.Name = reqCategory.Name
-	//createdCategory, err := h.service.Create(&dbCat)
-	//if err != nil {
-	//	c.JSON(httpErr.ErrorResponse(err))
-	//	return
-	//}
 	createdCategory, err := h.service.AddSingle(reqCategory)
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(err))
@@ -121,5 +104,12 @@ func (h *categoryHandler) addSingle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, createdCategory)
+}
+
+func (h *categoryHandler) delete(context *gin.Context) {
+
+}
+
+func (h *categoryHandler) update(context *gin.Context) {
 
 }

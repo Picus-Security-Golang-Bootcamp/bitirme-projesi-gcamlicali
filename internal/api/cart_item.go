@@ -8,6 +8,7 @@ package api
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -17,32 +18,76 @@ import (
 // swagger:model Cart_Item
 type CartItem struct {
 
-	// cart id
-	CartID int64 `json:"cart_id,omitempty"`
-
-	// id
-	ID int64 `json:"id,omitempty"`
-
 	// price
 	Price int32 `json:"price,omitempty"`
 
-	// product id
-	ProductID int64 `json:"product_id,omitempty"`
+	// product
+	Product *Product `json:"product,omitempty"`
 
 	// quantity
 	Quantity int32 `json:"quantity,omitempty"`
-
-	// user id
-	UserID int64 `json:"user_id,omitempty"`
 }
 
 // Validate validates this cart item
 func (m *CartItem) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateProduct(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this cart item based on context it is used
+func (m *CartItem) validateProduct(formats strfmt.Registry) error {
+	if swag.IsZero(m.Product) { // not required
+		return nil
+	}
+
+	if m.Product != nil {
+		if err := m.Product.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("product")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("product")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this cart item based on the context it is used
 func (m *CartItem) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateProduct(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CartItem) contextValidateProduct(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Product != nil {
+		if err := m.Product.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("product")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("product")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

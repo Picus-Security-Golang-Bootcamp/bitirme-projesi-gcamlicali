@@ -26,10 +26,13 @@ func NewProductHandler(r *gin.RouterGroup, proRepo *ProductRepositoy, catRepo *c
 	h := &productHandler{proRepo: proRepo, catRepo: catRepo}
 
 	r.GET("/", h.getAll)
-	addRoute := r.Group("/add")
-	addRoute.Use(mw.AuthMiddleware(cfg.JWTConfig.SecretKey))
-	addRoute.POST("/bulkItems", h.addBulk)
-	addRoute.POST("/singleItem", h.addSingle)
+
+	signedRoute := r.Group("/signed")
+	signedRoute.Use(mw.AuthMiddleware(cfg.JWTConfig.SecretKey))
+	signedRoute.DELETE("/", h.delete)
+	signedRoute.PUT("/", h.update)
+	signedRoute.POST("/addBulk", h.addBulk)
+	signedRoute.POST("/addSingle", h.addSingle)
 }
 
 func (p *productHandler) addBulk(c *gin.Context) {
@@ -139,4 +142,12 @@ func (p *productHandler) getAll(c *gin.Context) {
 	paginatedResult.Items = productsToResponse(*products)
 
 	c.JSON(http.StatusOK, paginatedResult)
+}
+
+func (p *productHandler) delete(context *gin.Context) {
+
+}
+
+func (p *productHandler) update(context *gin.Context) {
+
 }
