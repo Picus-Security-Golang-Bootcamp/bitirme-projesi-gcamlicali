@@ -20,7 +20,7 @@ type Service interface {
 	GetByID(id string) (*models.Category, error)
 	Update(a *models.Category) (*models.Category, error)
 	Delete(id string) error
-	GetAll() (*[]models.Category, error)
+	GetAll(pageIndex, pageSize int) (*[]models.Category, int, error)
 	AddBulk(file multipart.File) error
 	AddSingle(category api.Category) (*models.Category, error)
 }
@@ -62,15 +62,15 @@ func (c categoryService) Delete(id string) error {
 	panic("implement me")
 }
 
-func (c categoryService) GetAll() (*[]models.Category, error) {
+func (c categoryService) GetAll(pageIndex, pageSize int) (*[]models.Category, int, error) {
 
-	categories := &[]models.Category{}
-	categories, err := c.repo.GetAll()
+	//categories := &[]models.Category{}
+	categories, count, err := c.repo.GetAll(pageIndex, pageSize)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return categories, nil
+	return categories, count, nil
 }
 
 func (c categoryService) AddBulk(file multipart.File) error {

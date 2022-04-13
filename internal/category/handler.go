@@ -5,6 +5,7 @@ import (
 	httpErr "github.com/gcamlicali/tradeshopExample/internal/httpErrors"
 	"github.com/gcamlicali/tradeshopExample/pkg/config"
 	mw "github.com/gcamlicali/tradeshopExample/pkg/middleware"
+	"github.com/gcamlicali/tradeshopExample/pkg/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cast"
@@ -27,13 +28,15 @@ func NewCategoryHandler(r *gin.RouterGroup, service Service, cfg *config.Config)
 
 func (h *categoryHandler) getAll(c *gin.Context) {
 
-	categories, err := h.service.GetAll()
+	pageIndex, pageSize := pagination.GetPaginationParametersFromRequest(c)
+	categories, count, err := h.service.GetAll(pageIndex, pageSize)
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusInternalServerError, err.Error(), nil)))
 		return
 	}
-
-	c.JSON(http.StatusOK, catsModelToApi(categories))
+	paginatedResult := pagination.NewFromGinRequest(c, count)
+	paginatedResult.Items = catsModelToApi(categories)
+	c.JSON(http.StatusOK, paginatedResult)
 }
 
 func (h *categoryHandler) addBulk(c *gin.Context) {

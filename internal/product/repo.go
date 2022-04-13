@@ -23,16 +23,20 @@ func (r *ProductRepositoy) create(a *models.Product) (*models.Product, error) {
 	return a, nil
 }
 
-func (r *ProductRepositoy) getAll() (*[]models.Product, error) {
+func (r *ProductRepositoy) getAll(pageIndex, pageSize int) (*[]models.Product, int, error) {
 	zap.L().Debug("product.repo.getAll")
 
 	var ps = &[]models.Product{}
-	if err := r.db.Find(&ps).Error; err != nil {
-		zap.L().Error("product.repo.getAll failed to get products", zap.Error(err))
-		return nil, err
-	}
+	var junk = &[]models.Product{}
+	var count int64
 
-	return ps, nil
+	if err := r.db.Offset((pageIndex - 1) * pageSize).Limit(pageSize).Find(&ps).Error; err != nil {
+		zap.L().Error("product.repo.getAll failed to get products", zap.Error(err))
+		return nil, 0, err
+	}
+	r.db.Find(&junk).Count(&count)
+	junk = nil
+	return ps, int(count), nil
 }
 
 func (r *ProductRepositoy) getByID(id string) (*models.Product, error) {

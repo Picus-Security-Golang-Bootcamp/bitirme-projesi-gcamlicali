@@ -69,15 +69,18 @@ func (r *CategoryRepositoy) Delete(id string) error {
 	return nil
 }
 
-func (r *CategoryRepositoy) GetAll() (*[]models.Category, error) {
+func (r *CategoryRepositoy) GetAll(pageIndex, pageSize int) (*[]models.Category, int, error) {
 	zap.L().Debug("category.repo.getAll")
 
 	var categories = &[]models.Category{}
-	if result := r.db.Find(&categories); result.Error != nil {
-		return nil, result.Error
+	var junk = &[]models.Category{}
+	var count int64
+	if result := r.db.Offset((pageIndex - 1) * pageSize).Limit(pageSize).Find(&categories); result.Error != nil {
+		return nil, 0, result.Error
 	}
-
-	return categories, nil
+	r.db.Find(&junk).Count(&count)
+	junk = nil
+	return categories, int(count), nil
 }
 
 func (r *CategoryRepositoy) Migration() {

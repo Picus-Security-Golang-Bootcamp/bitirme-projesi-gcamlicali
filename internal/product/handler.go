@@ -8,9 +8,11 @@ import (
 	"github.com/gcamlicali/tradeshopExample/pkg/config"
 	"github.com/gcamlicali/tradeshopExample/pkg/csv"
 	mw "github.com/gcamlicali/tradeshopExample/pkg/middleware"
+	"github.com/gcamlicali/tradeshopExample/pkg/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cast"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -125,11 +127,16 @@ func (p *productHandler) addSingle(c *gin.Context) {
 	c.JSON(http.StatusOK, ProductToResponse(product))
 }
 func (p *productHandler) getAll(c *gin.Context) {
-	products, err := p.proRepo.getAll()
+	pageIndex, pageSize := pagination.GetPaginationParametersFromRequest(c)
+	products, count, err := p.proRepo.getAll(pageIndex, pageSize)
+	log.Println("count getall: ", count)
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, productsToResponse(*products))
+	paginatedResult := pagination.NewFromGinRequest(c, count)
+	paginatedResult.Items = productsToResponse(*products)
+
+	c.JSON(http.StatusOK, paginatedResult)
 }
