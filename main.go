@@ -70,6 +70,8 @@ func main() {
 	productRouter := rootRouter.Group("/product")
 	categoryRouter := rootRouter.Group("/category")
 	cartRouter := rootRouter.Group("/cart")
+
+	//MW Control
 	cartRouter.Use(mw.AuthMiddleware(cfg.JWTConfig.SecretKey))
 
 	// Category Repository
@@ -96,7 +98,8 @@ func main() {
 
 	cartRepo := cart.NewCartRepository(DB)
 	cartRepo.Migration()
-	cart.NewCartHandler(cartRouter, cartRepo, cartItemRepo, productRepo)
+	cartService := cart.NewCartService(cartRepo, cartItemRepo, productRepo)
+	cart.NewCartHandler(cartRouter, cartService)
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

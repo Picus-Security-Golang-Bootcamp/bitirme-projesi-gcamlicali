@@ -398,7 +398,6 @@ definitions:
         format: "int32"
       product:
         $ref: "#/definitions/Product"
-
   Category:
     type: "object"
     required:
@@ -469,7 +468,14 @@ definitions:
         type: "string"
       isAdmin:
         type: "boolean"
-
+  ItemQuantity:
+    type: "object"
+    required:
+      - "quantity"
+    properties:
+      quantity:
+        type: "integer"
+        format: "int32"
   Login:
     type: "object"
     required:

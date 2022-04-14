@@ -39,7 +39,7 @@ func (r *ProductRepositoy) getAll(pageIndex, pageSize int) (*[]models.Product, i
 	return ps, int(count), nil
 }
 
-func (r *ProductRepositoy) GetByID(id string) (*models.Product, error) {
+func (r *ProductRepositoy) GetByID(id int) (*models.Product, error) {
 	zap.L().Debug("product.repo.getByID", zap.Reflect("id", id))
 
 	var product = &models.Product{}
@@ -60,7 +60,7 @@ func (r *ProductRepositoy) Update(a *models.Product) (*models.Product, error) {
 	return a, nil
 }
 
-func (r *ProductRepositoy) delete(id string) error {
+func (r *ProductRepositoy) delete(id int) error {
 	zap.L().Debug("product.repo.delete", zap.Reflect("id", id))
 
 	product, err := r.GetByID(id)

@@ -86,7 +86,6 @@ func (p *productHandler) addBulk(c *gin.Context) {
 	c.JSON(http.StatusCreated, "Products uploaded and created")
 	return
 }
-
 func (p *productHandler) addSingle(c *gin.Context) {
 	adminInterface, isExist := c.Get("isAdmin")
 	if !isExist {
@@ -143,11 +142,9 @@ func (p *productHandler) getAll(c *gin.Context) {
 
 	c.JSON(http.StatusOK, paginatedResult)
 }
-
 func (p *productHandler) delete(context *gin.Context) {
 
 }
-
 func (p *productHandler) update(context *gin.Context) {
 
 }
