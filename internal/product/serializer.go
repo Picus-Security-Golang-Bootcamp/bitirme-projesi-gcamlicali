@@ -14,11 +14,11 @@ func ProductToResponse(p *models.Product) *api.Product {
 	//log.Println("ID: ", int64(p.ID))
 	//log.Println("Sku: ", &p.SKU)
 	//log.Println("Desc: ", p.Description)
+	int64Sku := int64(p.SKU)
 	return &api.Product{
 
 		CategoryName: &p.CategoryName,
-		ID:           int64(p.ID),
-		Sku:          &p.SKU,
+		Sku:          &int64Sku,
 		Name:         &p.Name,
 		Description:  p.Description,
 		Price:        &p.Price,
@@ -40,11 +40,21 @@ func productsToResponse(ps []models.Product) []*api.Product {
 
 func responseToProduct(p *api.Product) *models.Product {
 	return &models.Product{
-		Model:        gorm.Model{ID: uint(p.ID)},
+		Model:        gorm.Model{},
 		CategoryName: *p.CategoryName,
 		Name:         *p.Name,
-		SKU:          *p.Sku,
+		SKU:          int(*p.Sku),
 		Description:  p.Description,
 		UnitStock:    *p.UnitStock,
+	}
+}
+
+func responseToProductUp(p *api.ProductUp) *models.Product {
+	return &models.Product{
+		CategoryName: p.CategoryName,
+		Name:         p.Name,
+		SKU:          int(p.Sku),
+		Description:  p.Description,
+		UnitStock:    p.UnitStock,
 	}
 }

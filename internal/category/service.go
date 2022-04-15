@@ -90,7 +90,7 @@ func (c categoryService) AddBulk(file multipart.File) error {
 }
 
 func (c categoryService) AddSingle(category api.Category) (*models.Category, error) {
-	log.Println("Srvice Add single geldi")
+
 	dbCat := models.Category{}
 	dbCat.Name = category.Name
 	createdCategory, err := c.Create(&dbCat)

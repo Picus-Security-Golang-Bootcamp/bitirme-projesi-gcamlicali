@@ -26,9 +26,6 @@ type Product struct {
 	// description
 	Description string `json:"description,omitempty"`
 
-	// id
-	ID int64 `json:"id,omitempty"`
-
 	// name
 	// Required: true
 	Name *string `json:"name"`
@@ -39,7 +36,7 @@ type Product struct {
 
 	// sku
 	// Required: true
-	Sku *string `json:"sku"`
+	Sku *int64 `json:"sku"`
 
 	// unit stock
 	// Required: true

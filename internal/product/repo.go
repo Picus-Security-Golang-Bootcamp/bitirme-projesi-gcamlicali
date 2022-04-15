@@ -1,9 +1,11 @@
 package product
 
 import (
+	"errors"
 	"github.com/gcamlicali/tradeshopExample/internal/models"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"log"
 )
 
 type ProductRepositoy struct {
@@ -43,8 +45,25 @@ func (r *ProductRepositoy) GetByID(id int) (*models.Product, error) {
 	zap.L().Debug("product.repo.getByID", zap.Reflect("id", id))
 
 	var product = &models.Product{}
-	if result := r.db.First(&product, id); result.Error != nil {
-		return nil, result.Error
+	err := r.db.First(&product, id).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return product, nil
+}
+
+func (r *ProductRepositoy) GetBySKU(sku int) (*models.Product, error) {
+	zap.L().Debug("product.repo.getBySKU", zap.Reflect("SKU", sku))
+
+	var product = &models.Product{}
+	err := r.db.Where(&models.Product{SKU: sku}).First(&product).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		log.Println("Product Kaydi yok")
+	}
+	if err != nil {
+
+		return nil, err
 	}
 
 	return product, nil
@@ -64,6 +83,21 @@ func (r *ProductRepositoy) delete(id int) error {
 	zap.L().Debug("product.repo.delete", zap.Reflect("id", id))
 
 	product, err := r.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	if result := r.db.Delete(&product); result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
+func (r *ProductRepositoy) deleteBySku(sku int) error {
+	zap.L().Debug("product.repo.deleteBySku", zap.Reflect("SKU", sku))
+
+	product, err := r.GetBySKU(sku)
 	if err != nil {
 		return err
 	}

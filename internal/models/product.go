@@ -7,7 +7,7 @@ import (
 type Product struct {
 	gorm.Model
 	CategoryName string // Category Category
-	SKU          string `gorm:"unique"`
+	SKU          int    `gorm:"unique"`
 	Name         string
 	Description  string
 	UnitStock    int32

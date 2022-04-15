@@ -463,15 +463,31 @@ definitions:
       - "price"
       - "unitStock"
     properties:
-      id:
-        type: "integer"
-        format: "int64"
       category_name:
         type: "string"
       name:
         type: "string"
       sku:
+        type: "integer"
+        format: "int64"
+      description:
         type: "string"
+      price:
+        type: "integer"
+        format: "int32"
+      unitStock:
+        type: "integer"
+        format: "int32"
+  ProductUp:
+    type: "object"
+    properties:
+      category_name:
+        type: "string"
+      name:
+        type: "string"
+      sku:
+        type: "integer"
+        format: "int64"
       description:
         type: "string"
       price:
