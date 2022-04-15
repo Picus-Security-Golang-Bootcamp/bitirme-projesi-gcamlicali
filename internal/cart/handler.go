@@ -32,7 +32,6 @@ func (ch *cartHandler) get(c *gin.Context) {
 	userid := cast.ToInt(userID)
 
 	cart, err := ch.service.Get(userid)
-
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(err))
 		return
@@ -51,11 +50,10 @@ func (ch *cartHandler) add(c *gin.Context) {
 
 	paramID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err)))
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err.Error())))
 	}
 
 	cart, err := ch.service.Add(userID, paramID)
-
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(err))
 		return
@@ -73,11 +71,11 @@ func (ch *cartHandler) update(c *gin.Context) {
 
 	paramID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err)))
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err.Error())))
 	}
 	reqQuantity := api.ItemQuantity{}
 	if err := c.Bind(&reqQuantity); err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "check your request body", nil)))
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "check your request body", err.Error())))
 		return
 	}
 	if err := reqQuantity.Validate(strfmt.NewFormats()); err != nil {
@@ -106,13 +104,12 @@ func (ch *cartHandler) delete(c *gin.Context) {
 
 	paramID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err)))
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err.Error())))
 	}
 
 	userID := cast.ToInt(userid)
 
 	cart, err := ch.service.Delete(userID, paramID)
-
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(err))
 		return

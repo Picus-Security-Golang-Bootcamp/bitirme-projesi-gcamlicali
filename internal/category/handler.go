@@ -32,13 +32,15 @@ func NewCategoryHandler(r *gin.RouterGroup, service Service, cfg *config.Config)
 func (h *categoryHandler) getAll(c *gin.Context) {
 
 	pageIndex, pageSize := pagination.GetPaginationParametersFromRequest(c)
+
 	categories, count, err := h.service.GetAll(pageIndex, pageSize)
 	if err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusInternalServerError, err.Error(), nil)))
+		c.JSON(httpErr.ErrorResponse(err))
 		return
 	}
 	paginatedResult := pagination.NewFromGinRequest(c, count)
 	paginatedResult.Items = catsModelToApi(categories)
+
 	c.JSON(http.StatusOK, paginatedResult)
 }
 
@@ -57,7 +59,7 @@ func (h *categoryHandler) addBulk(c *gin.Context) {
 	}
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "Can not request body", nil)))
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "Request File download error", err.Error())))
 		return
 	}
 
@@ -88,7 +90,7 @@ func (h *categoryHandler) addSingle(c *gin.Context) {
 
 	reqCategory := api.Category{}
 	if err := c.Bind(&reqCategory); err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "check your request body", nil)))
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "check your request body", err.Error())))
 		return
 	}
 

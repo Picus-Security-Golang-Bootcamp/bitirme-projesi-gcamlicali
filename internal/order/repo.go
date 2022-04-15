@@ -37,7 +37,7 @@ func (r *OrderRepositoy) GetByOrderAndUserID(userID, orderID int) (*models.Order
 
 func (r *OrderRepositoy) GetByUserID(userID int) (*[]models.Order, error) {
 	zap.L().Debug("order.repo.GetByUserID", zap.Reflect("userID", userID))
-	var orders []models.Order //duzelt dikkat
+	var orders []models.Order
 	err := r.db.Where(&models.Order{UserID: userID}).Find(&orders).Error
 	if err != nil {
 		zap.L().Error("order.repo.GetByUserID failed to get Orders", zap.Error(err))

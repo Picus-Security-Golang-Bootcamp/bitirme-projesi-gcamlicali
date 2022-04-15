@@ -29,9 +29,8 @@ func NewCartService(crepo *CartRepositoy, cirepo *cart_item.CartItemRepositoy, p
 func (c *cartService) Get(userID int) (*models.Cart, error) {
 
 	cart, err := c.crepo.GetByUserID(userID)
-
 	if err != nil {
-		return nil, httpErr.NewRestError(http.StatusBadRequest, err.Error(), err)
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart get error", err.Error())
 	}
 
 	return cart, nil
@@ -39,29 +38,32 @@ func (c *cartService) Get(userID int) (*models.Cart, error) {
 
 //Add item to cart
 func (c *cartService) Add(userID int, ProductID int) (*models.Cart, error) {
-	cart, err := c.crepo.GetByUserID(userID)
 
+	cart, err := c.crepo.GetByUserID(userID) // duzelt kontrol edilecek bu error
 	if err != nil {
-		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart error", err)
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart get error", err.Error())
 	}
 
-	product, err := c.prepo.GetByID(ProductID)
+	product, err := c.prepo.GetByID(ProductID) // duzelt kontrol edilecek bu error
 	if err != nil {
-		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err)
+		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
 	}
 
 	cartItem, err := c.cirepo.GetByCartAndProductID(int(cart.ID), ProductID)
-	//Duzelt quantity control
+
 	// If item exists in cart, increase item quantity by 1
 	if cartItem != nil {
 
 		cartItem.Quantity = cartItem.Quantity + 1
 		_, err = c.cirepo.Update(cartItem)
 		if err != nil {
-			return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart Item update error", err)
+			return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart Item update error", err.Error())
 		}
 
 		newCart, _ := c.crepo.GetByUserID(userID)
+		if err != nil {
+			return nil, httpErr.NewRestError(http.StatusInternalServerError, "Get Cart error", err.Error())
+		}
 
 		return newCart, nil
 
@@ -77,14 +79,14 @@ func (c *cartService) Add(userID int, ProductID int) (*models.Cart, error) {
 
 		addItem, err := c.cirepo.Crate(&newCartItem)
 		if err != nil {
-			return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart Item crate error", err)
+			return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart Item crate error", err.Error())
 		}
 
 		cart.CartItems = append(cart.CartItems, *addItem)
 
 		newCart, err := c.crepo.Update(cart)
 		if err != nil {
-			return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart Item update error", err)
+			return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart Item update error", err.Error())
 		}
 
 		return newCart, nil
@@ -93,24 +95,31 @@ func (c *cartService) Add(userID int, ProductID int) (*models.Cart, error) {
 
 //Update quantity of given cart item
 func (c *cartService) Update(userID int, ProductID int, Quantity int) (*models.Cart, error) {
+
 	cart, err := c.crepo.GetByUserID(userID)
+	if err != nil {
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Get Cart error", err.Error())
+	}
 
 	if err != nil {
-		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart error", err)
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart error", err.Error())
 	}
 
 	cartItem, err := c.cirepo.GetByCartAndProductID(int(cart.ID), ProductID)
 	if err != nil {
-		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", nil)
+		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
 	}
 	// Duzelt Quantity control
 	cartItem.Quantity = Quantity
 	_, err = c.cirepo.Update(cartItem)
 	if err != nil {
-		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart Item update error", err)
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart Item update error", err.Error())
 	}
 
-	newCart, _ := c.crepo.GetByUserID(userID)
+	newCart, err := c.crepo.GetByUserID(userID)
+	if err != nil {
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Get Cart error", err.Error())
+	}
 
 	return newCart, nil
 }
@@ -118,22 +127,24 @@ func (c *cartService) Update(userID int, ProductID int, Quantity int) (*models.C
 //Delete given item from cart
 func (c *cartService) Delete(userID int, ProductID int) (*models.Cart, error) {
 	cart, err := c.crepo.GetByUserID(userID)
-
 	if err != nil {
-		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart error", err)
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Get Cart error", err.Error())
 	}
 
 	cartItem, err := c.cirepo.GetByCartAndProductID(int(cart.ID), ProductID)
 	if err != nil {
-		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", nil)
+		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
 	}
 
 	err = c.cirepo.Delete(cartItem)
 	if err != nil {
-		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart item Delete error", err)
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart item Delete error", err.Error())
 	}
 
-	newCart, _ := c.crepo.GetByUserID(userID)
+	newCart, err := c.crepo.GetByUserID(userID) // duzelt kontrol edilecek bu error
+	if err != nil {
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Get Cart error", err.Error())
+	}
 
 	return newCart, nil
 }

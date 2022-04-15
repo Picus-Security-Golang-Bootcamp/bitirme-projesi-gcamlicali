@@ -29,8 +29,14 @@ func (r *CartRepositoy) GetByUserID(userID int) (*models.Cart, error) {
 
 	var cart = &models.Cart{}
 
-	err := r.db.Table("cart").Preload("CartItems").Preload("CartItems.Product").Where(&models.Cart{UserID: userID}).Where("is_ordered =?", false).First(&cart).Error
-	//err := r.db.Preload("CartItems").Where("user_id =?", userID).First(&cart).Error
+	err := r.db.
+		Table("cart").
+		Preload("CartItems").
+		Preload("CartItems.Product").
+		Where(&models.Cart{UserID: userID}).
+		Where("is_ordered =?", false).
+		First(&cart).Error
+
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		cart.UserID = userID
 		newCart, err := r.Create(cart)
@@ -42,9 +48,7 @@ func (r *CartRepositoy) GetByUserID(userID int) (*models.Cart, error) {
 	if err != nil {
 		return nil, err
 	}
-	if cart == nil {
 
-	}
 	return cart, nil
 }
 

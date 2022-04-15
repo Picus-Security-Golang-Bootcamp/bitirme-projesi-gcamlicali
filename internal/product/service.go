@@ -37,6 +37,7 @@ func (p *productService) AddBulk(file multipart.File) error {
 		return httpErr.NewRestError(http.StatusInternalServerError, "Can not read csv file", err.Error())
 	}
 
+	// Duzelt
 	for _, line := range record {
 		proEntity := models.Product{}
 		proEntity.CategoryName = line[0]

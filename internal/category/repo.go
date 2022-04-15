@@ -27,8 +27,8 @@ func (r *CategoryRepositoy) GetByID(id string) (*models.Category, error) {
 	zap.L().Debug("category.repo.getByID", zap.Reflect("id", id))
 
 	var category = &models.Category{}
-	if result := r.db.First(&category, id); result.Error != nil {
-		return nil, result.Error
+	if err := r.db.First(&category, id).Error; err != nil {
+		return nil, err
 	}
 
 	return category, nil
@@ -75,8 +75,8 @@ func (r *CategoryRepositoy) GetAll(pageIndex, pageSize int) (*[]models.Category,
 	var categories = &[]models.Category{}
 	var junk = &[]models.Category{}
 	var count int64
-	if result := r.db.Offset((pageIndex - 1) * pageSize).Limit(pageSize).Find(&categories); result.Error != nil {
-		return nil, 0, result.Error
+	if err := r.db.Offset((pageIndex - 1) * pageSize).Limit(pageSize).Find(&categories).Error; err != nil {
+		return nil, 0, err
 	}
 	r.db.Find(&junk).Count(&count)
 	junk = nil

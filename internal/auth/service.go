@@ -29,17 +29,14 @@ func NewAuthService(repo AuthRepositoy, cfg *config.Config) Service {
 func (a *authService) SignIn(login *api.Login) (string, error) {
 	user, err := a.repo.getByMail(*login.Email)
 	if err != nil {
-		//c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "user not found", nil)))
-		return "", httpErr.NewRestError(http.StatusBadRequest, "user not found", nil)
+		return "", httpErr.NewRestError(http.StatusBadRequest, "User get err", err.Error())
 	}
 	if user == nil {
-		//c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "user not found", nil)))
 		return "", httpErr.NewRestError(http.StatusBadRequest, "user not found", nil)
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(*user.Password), []byte(*login.Password)); err != nil {
-		//c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "Wrong Password", nil)))
-		return "", httpErr.NewRestError(http.StatusBadRequest, "Wrong Password", nil)
+		return "", httpErr.NewRestError(http.StatusBadRequest, "Wrong Password", err.Error())
 	}
 	jwtClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId": user.ID,
@@ -59,16 +56,14 @@ func (a *authService) SignUp(login *api.User) (string, error) {
 
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(*login.Password), bcrypt.DefaultCost)
 	if err != nil {
-		//c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusUnprocessableEntity, "encryption error", nil)))
-		return "", httpErr.NewRestError(http.StatusUnprocessableEntity, "encryption error", nil)
+		return "", httpErr.NewRestError(http.StatusUnprocessableEntity, "encryption error", err.Error())
 	}
 	passBeforeReg := string(hashPassword)
 	login.Password = &passBeforeReg
 
 	createdUser, err := a.repo.create(userApiToModel(login))
 	if err != nil {
-		//c.JSON(httpErr.ErrorResponse(err))
-		return "", err
+		return "", httpErr.NewRestError(http.StatusInternalServerError, "Can't create user", err.Error())
 	}
 
 	jwtClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

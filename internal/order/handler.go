@@ -66,7 +66,7 @@ func (o *orderHandler) cancel(c *gin.Context) {
 
 	orderID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err)))
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err.Error())))
 	}
 
 	err = o.service.Cancel(userid, orderID)

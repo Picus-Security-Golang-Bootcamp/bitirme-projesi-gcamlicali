@@ -6,7 +6,7 @@ import (
 	httpErr "github.com/gcamlicali/tradeshopExample/internal/httpErrors"
 	"github.com/gcamlicali/tradeshopExample/internal/models"
 	csvRead "github.com/gcamlicali/tradeshopExample/pkg/csv"
-	"log"
+	"gorm.io/gorm"
 	"mime/multipart"
 	"net/http"
 )
@@ -31,9 +31,8 @@ func NewCategoryService(repo CategoryRepositoy) Service {
 
 func (c categoryService) Create(a *models.Category) (*models.Category, error) {
 	NewCategory, err := c.repo.Create(a)
-
 	if err != nil {
-		return nil, err
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Catagory create error", err.Error())
 	}
 
 	return NewCategory, nil
@@ -49,7 +48,13 @@ func (c categoryService) GetByID(id string) (*models.Category, error) {
 		return nil, errors.New("Id cannot be nil or empty")
 	}
 
-	category, _ := c.repo.GetByID(id)
+	category, err := c.repo.GetByID(id)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, httpErr.NewRestError(http.StatusBadRequest, "Category not found", err.Error())
+	}
+	if err != nil {
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Catagory get by id error", err.Error())
+	}
 	return category, nil
 }
 
@@ -60,7 +65,6 @@ func (c categoryService) Delete(id string) error {
 
 func (c categoryService) GetAll(pageIndex, pageSize int) (*[]models.Category, int, error) {
 
-	//categories := &[]models.Category{}
 	categories, count, err := c.repo.GetAll(pageIndex, pageSize)
 	if err != nil {
 		return nil, 0, err
@@ -73,7 +77,7 @@ func (c categoryService) AddBulk(file multipart.File) error {
 
 	record, err := csvRead.ReadFile(file)
 	if err != nil {
-		return httpErr.NewRestError(http.StatusInternalServerError, "Can not read csv file", nil)
+		return httpErr.NewRestError(http.StatusInternalServerError, "Can not read csv file", err.Error())
 	}
 
 	for _, line := range record {
@@ -81,23 +85,21 @@ func (c categoryService) AddBulk(file multipart.File) error {
 		catEntity.Name = &line[0]
 		_, err = c.Create(&catEntity)
 		if err != nil {
-			return httpErr.NewRestError(http.StatusBadRequest, err.Error(), nil)
+			return httpErr.NewRestError(http.StatusBadRequest, "Category create error", err.Error())
 		}
 	}
 
 	return nil
-
 }
 
 func (c categoryService) AddSingle(category api.Category) (*models.Category, error) {
 
 	dbCat := models.Category{}
 	dbCat.Name = category.Name
+
 	createdCategory, err := c.Create(&dbCat)
-	log.Println("Database service single geldi")
 	if err != nil {
-		log.Println("Database service single hata var")
-		return nil, httpErr.NewRestError(http.StatusBadRequest, err.Error(), nil)
+		return nil, httpErr.NewRestError(http.StatusBadRequest, "Category create error", err.Error())
 	}
 
 	return createdCategory, nil
