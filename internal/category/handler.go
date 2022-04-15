@@ -108,10 +108,62 @@ func (h *categoryHandler) addSingle(c *gin.Context) {
 	c.JSON(http.StatusCreated, createdCategory)
 }
 
-func (h *categoryHandler) delete(context *gin.Context) {
+func (h *categoryHandler) delete(c *gin.Context) {
+	adminInterface, isExist := c.Get("isAdmin")
+	if !isExist {
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "Admin not found", nil)))
+		return
+	}
+
+	isAdmin := cast.ToBool(adminInterface)
+	if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to use this endpoint!"})
+		return
+	}
+
+	catName := c.Param("Name")
+
+	err := h.service.Delete(catName)
+	if err != nil {
+		c.JSON(httpErr.ErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusCreated, "Category and its items Delete Succesful")
 
 }
 
-func (h *categoryHandler) update(context *gin.Context) {
+func (h *categoryHandler) update(c *gin.Context) {
+	adminInterface, isExist := c.Get("isAdmin")
+	if !isExist {
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "Admin not found", nil)))
+		return
+	}
 
+	isAdmin := cast.ToBool(adminInterface)
+	if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to use this endpoint!"})
+		return
+	}
+
+	catName := c.Param("Name")
+
+	reqCategory := api.Category{}
+	if err := c.Bind(&reqCategory); err != nil {
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "check your request body", err.Error())))
+		return
+	}
+
+	if err := reqCategory.Validate(strfmt.NewFormats()); err != nil {
+		c.JSON(httpErr.ErrorResponse(err))
+		return
+	}
+
+	updatedCategory, err := h.service.Update(catName, &reqCategory)
+	if err != nil {
+		c.JSON(httpErr.ErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, catModelToApi(updatedCategory))
 }

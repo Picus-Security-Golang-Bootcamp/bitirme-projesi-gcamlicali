@@ -5,6 +5,7 @@ import (
 	"github.com/gcamlicali/tradeshopExample/internal/api"
 	httpErr "github.com/gcamlicali/tradeshopExample/internal/httpErrors"
 	"github.com/gcamlicali/tradeshopExample/internal/models"
+	"github.com/gcamlicali/tradeshopExample/internal/product"
 	csvRead "github.com/gcamlicali/tradeshopExample/pkg/csv"
 	"gorm.io/gorm"
 	"mime/multipart"
@@ -12,21 +13,22 @@ import (
 )
 
 type categoryService struct {
-	repo CategoryRepositoy
+	repo  *CategoryRepositoy
+	prepo *product.ProductRepositoy
 }
 
 type Service interface {
 	Create(a *models.Category) (*models.Category, error)
-	GetByID(id string) (*models.Category, error)
-	Update(a *models.Category) (*models.Category, error)
-	Delete(id string) error
+	GetByID(id int) (*models.Category, error)
+	Update(catName string, ca *api.Category) (*models.Category, error)
+	Delete(name string) error
 	GetAll(pageIndex, pageSize int) (*[]models.Category, int, error)
 	AddBulk(file multipart.File) error
 	AddSingle(category api.Category) (*models.Category, error)
 }
 
-func NewCategoryService(repo CategoryRepositoy) Service {
-	return &categoryService{repo: repo}
+func NewCategoryService(repo *CategoryRepositoy, prepo *product.ProductRepositoy) Service {
+	return &categoryService{repo: repo, prepo: prepo}
 }
 
 func (c categoryService) Create(a *models.Category) (*models.Category, error) {
@@ -38,15 +40,37 @@ func (c categoryService) Create(a *models.Category) (*models.Category, error) {
 	return NewCategory, nil
 }
 
-func (c categoryService) Update(ca *models.Category) (*models.Category, error) {
-	//TODO implement me
-	panic("implement me")
+func (c categoryService) Update(catName string, ca *api.Category) (*models.Category, error) {
+	//category, err := c.repo.GetByName(catName)
+	//if errors.Is(err, gorm.ErrRecordNotFound) {
+	//	return nil, httpErr.NewRestError(http.StatusBadRequest, "Category not found", err.Error())
+	//}
+	//if err != nil {
+	//	return nil, httpErr.NewRestError(http.StatusInternalServerError, "Get category error", err.Error())
+	//}
+	//
+	//category.Name = ca.Name
+	//
+	//updatedCategory, err := c.repo.Update(category)
+	//if err != nil {
+	//	return nil, httpErr.NewRestError(http.StatusInternalServerError, "Update category error", err.Error())
+	//}
+	//
+	////Update Products with new category name
+	//products, err := c.prepo.GetByCatName(catName)
+	//for _, product := range *products {
+	//	product.CategoryName = catName
+	//	_, err := c.prepo.Update(&product)
+	//	if err != nil {
+	//		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Update product error", err.Error())
+	//	}
+	//}
+
+	//return updatedCategory, nil
+	return nil, nil
 }
 
-func (c categoryService) GetByID(id string) (*models.Category, error) {
-	if len(id) == 0 {
-		return nil, errors.New("Id cannot be nil or empty")
-	}
+func (c categoryService) GetByID(id int) (*models.Category, error) { //duzelt uuid olacak
 
 	category, err := c.repo.GetByID(id)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -58,9 +82,28 @@ func (c categoryService) GetByID(id string) (*models.Category, error) {
 	return category, nil
 }
 
-func (c categoryService) Delete(id string) error {
-	//TODO implement me
-	panic("implement me")
+func (c categoryService) Delete(name string) error {
+	//category, err := c.repo.GetByName(name)
+	//if errors.Is(err, gorm.ErrRecordNotFound) {
+	//	return httpErr.NewRestError(http.StatusBadRequest, "Category not found", err.Error())
+	//}
+	//if err != nil {
+	//	return httpErr.NewRestError(http.StatusInternalServerError, "Get category error", err.Error())
+	//}
+	//
+	//err = c.repo.Delete(int(category.ID)) //duzelt uuid olacak
+	//
+	////Delete products include deleted category name
+	//products, err := c.prepo.GetByCatName(name)
+	//for _, product := range *products {
+	//	err := c.prepo.Delete(&product)
+	//	if err != nil {
+	//		return httpErr.NewRestError(http.StatusInternalServerError, "Update product error", err.Error())
+	//	}
+	//}
+	//return nil
+
+	return nil
 }
 
 func (c categoryService) GetAll(pageIndex, pageSize int) (*[]models.Category, int, error) {

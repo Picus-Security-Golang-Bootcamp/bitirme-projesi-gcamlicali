@@ -23,7 +23,7 @@ func (r *CategoryRepositoy) Create(a *models.Category) (*models.Category, error)
 	return a, nil
 }
 
-func (r *CategoryRepositoy) GetByID(id string) (*models.Category, error) {
+func (r *CategoryRepositoy) GetByID(id int) (*models.Category, error) { //duzelt uuid olacak
 	zap.L().Debug("category.repo.getByID", zap.Reflect("id", id))
 
 	var category = &models.Category{}
@@ -54,7 +54,7 @@ func (r *CategoryRepositoy) Update(a *models.Category) (*models.Category, error)
 	return a, nil
 }
 
-func (r *CategoryRepositoy) Delete(id string) error {
+func (r *CategoryRepositoy) Delete(id int) error { // duzelt uuid olacak
 	zap.L().Debug("category.repo.delete", zap.Reflect("id", id))
 
 	category, err := r.GetByID(id)

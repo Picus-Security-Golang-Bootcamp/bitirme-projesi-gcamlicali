@@ -69,6 +69,22 @@ func (r *ProductRepositoy) GetBySKU(sku int) (*models.Product, error) {
 	return product, nil
 }
 
+func (r *ProductRepositoy) GetByCatName(catName string) (*[]models.Product, error) {
+	zap.L().Debug("product.repo.getByCatName", zap.Reflect("CategoryName", catName))
+
+	var product = &[]models.Product{}
+	err := r.db.Where(&models.Product{CategoryName: catName}).Find(&product).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		log.Println("Product Kaydi yok")
+	}
+	if err != nil {
+
+		return nil, err
+	}
+
+	return product, nil
+}
+
 func (r *ProductRepositoy) Update(a *models.Product) (*models.Product, error) {
 	zap.L().Debug("product.repo.update", zap.Reflect("product", a))
 
@@ -79,7 +95,17 @@ func (r *ProductRepositoy) Update(a *models.Product) (*models.Product, error) {
 	return a, nil
 }
 
-func (r *ProductRepositoy) delete(id int) error {
+func (r *ProductRepositoy) Delete(p *models.Product) error {
+	zap.L().Debug("product.repo.delete", zap.Reflect("product", p))
+
+	if result := r.db.Delete(p); result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
+func (r *ProductRepositoy) DeleteById(id int) error {
 	zap.L().Debug("product.repo.delete", zap.Reflect("id", id))
 
 	product, err := r.GetByID(id)

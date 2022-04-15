@@ -80,12 +80,14 @@ func main() {
 	// Category Repository
 	categoryRepo := category.NewCategoryRepository(DB)
 	categoryRepo.Migration()
-	categoryService := category.NewCategoryService(*categoryRepo)
+	productRepo := product.NewProductRepository(DB)
+	productRepo.Migration()
+
+	categoryService := category.NewCategoryService(categoryRepo, productRepo)
 	category.NewCategoryHandler(categoryRouter, categoryService, cfg)
 
 	//// Product Repository
-	productRepo := product.NewProductRepository(DB)
-	productRepo.Migration()
+
 	productService := product.NewProductService(productRepo, categoryRepo)
 	product.NewProductHandler(productRouter, productService, cfg)
 
