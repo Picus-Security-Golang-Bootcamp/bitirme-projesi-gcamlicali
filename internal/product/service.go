@@ -132,6 +132,12 @@ func (c productService) Update(SKU int, reqProduct *api.ProductUp) (*models.Prod
 		product.Name = reqProduct.Name
 	}
 	if reqProduct.CategoryName != "" {
+		//check category name of product
+		cat, _ := c.catRepo.GetByName(reqProduct.CategoryName)
+		if cat == nil {
+			return nil, httpErr.NewRestError(http.StatusBadRequest, "Product category name not found", err.Error())
+		}
+
 		product.CategoryName = reqProduct.CategoryName
 	}
 
