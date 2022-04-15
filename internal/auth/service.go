@@ -2,31 +2,38 @@ package auth
 
 import (
 	"github.com/gcamlicali/tradeshopExample/internal/api"
+	"github.com/gcamlicali/tradeshopExample/internal/cart"
 	httpErr "github.com/gcamlicali/tradeshopExample/internal/httpErrors"
+	"github.com/gcamlicali/tradeshopExample/internal/models"
 	"github.com/gcamlicali/tradeshopExample/pkg/config"
 	jwtHelper "github.com/gcamlicali/tradeshopExample/pkg/jwt"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"net/http"
 	"os"
 	"time"
 )
 
 type authService struct {
-	cfg  *config.Config
-	repo AuthRepositoy
+	cfg   *config.Config
+	repo  AuthRepositoy
+	cRepo cart.CartRepositoy
 }
 
 type Service interface {
 	SignIn(login *api.Login) (string, error)
 	SignUp(login *api.User) (string, error)
+	FillAdminData()
 }
 
-func NewAuthService(repo AuthRepositoy, cfg *config.Config) Service {
-	return &authService{repo: repo, cfg: cfg}
+func NewAuthService(repo AuthRepositoy, cRepo cart.CartRepositoy, cfg *config.Config) Service {
+	return &authService{repo: repo, cRepo: cRepo, cfg: cfg}
 }
 
 func (a *authService) SignIn(login *api.Login) (string, error) {
+
+	//Find user by api response mail in DB
 	user, err := a.repo.getByMail(*login.Email)
 	if err != nil {
 		return "", httpErr.NewRestError(http.StatusBadRequest, "User get err", err.Error())
@@ -35,9 +42,12 @@ func (a *authService) SignIn(login *api.Login) (string, error) {
 		return "", httpErr.NewRestError(http.StatusBadRequest, "user not found", nil)
 	}
 
+	// Compare user apiModel password with Encrypted user password in Database
 	if err := bcrypt.CompareHashAndPassword([]byte(*user.Password), []byte(*login.Password)); err != nil {
 		return "", httpErr.NewRestError(http.StatusBadRequest, "Wrong Password", err.Error())
 	}
+
+	//Generate token for user
 	jwtClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId": user.ID,
 		"email":  user.Mail,
@@ -54,6 +64,7 @@ func (a *authService) SignIn(login *api.Login) (string, error) {
 
 func (a *authService) SignUp(login *api.User) (string, error) {
 
+	//Encrypt the user password
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(*login.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", httpErr.NewRestError(http.StatusUnprocessableEntity, "encryption error", err.Error())
@@ -61,11 +72,13 @@ func (a *authService) SignUp(login *api.User) (string, error) {
 	passBeforeReg := string(hashPassword)
 	login.Password = &passBeforeReg
 
+	//Create  api response based user
 	createdUser, err := a.repo.create(userApiToModel(login))
 	if err != nil {
 		return "", httpErr.NewRestError(http.StatusInternalServerError, "Can't create user", err.Error())
 	}
 
+	//Generate token for user
 	jwtClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId": createdUser.ID,
 		"email":  createdUser.Mail,
@@ -76,5 +89,37 @@ func (a *authService) SignUp(login *api.User) (string, error) {
 	})
 	token := jwtHelper.GenerateToken(jwtClaims, a.cfg.JWTConfig.SecretKey)
 
+	//Initial, create a new cart for user
+	var cart = &models.Cart{}
+	cart.UserID = int(createdUser.ID)
+	_, err = a.cRepo.Create(cart)
+	if err != nil {
+		return "", httpErr.NewRestError(http.StatusInternalServerError, "Can't create new cart for new user", err.Error())
+	}
+
 	return token, nil
+}
+
+func (a *authService) FillAdminData() {
+	//Get Admin data from json file
+	admin := models.GetAdmin()
+
+	//Encrypt the admin password
+	hashPassword, _ := bcrypt.GenerateFromPassword([]byte(*admin.Password), bcrypt.DefaultCost)
+	passBeforeReg := string(hashPassword)
+	admin.Password = &passBeforeReg
+
+	//If admin existed ok, but doesn't exist create a new admin user
+	isNew := a.repo.CheckAndCreateAdmin(&admin)
+
+	//If new admin created, create a cart for admin
+	if isNew {
+		var cart = &models.Cart{}
+		cart.UserID = int(admin.ID)
+		_, err := a.cRepo.Create(cart)
+
+		if err != nil {
+			log.Fatal("Can't create new cart for new user")
+		}
+	}
 }

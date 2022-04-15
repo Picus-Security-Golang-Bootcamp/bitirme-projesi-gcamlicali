@@ -3,7 +3,6 @@ package auth
 import (
 	"github.com/gcamlicali/tradeshopExample/internal/models"
 	"go.uber.org/zap"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -46,19 +45,18 @@ func (r *AuthRepositoy) getByMail(mail string) (*models.User, error) {
 	return user, nil
 }
 
-func (r *AuthRepositoy) FillAdminData() {
-	admin := models.GetAdmin()
-	//Then encrypt the password
-	hashPassword, _ := bcrypt.GenerateFromPassword([]byte(*admin.Password), bcrypt.DefaultCost)
-	passBeforeReg := string(hashPassword)
-	admin.Password = &passBeforeReg
-	if r.db.Where("mail = ?", admin.Mail).Updates(&admin).RowsAffected == 0 {
-		_, err := r.create(&admin)
+func (r *AuthRepositoy) CheckAndCreateAdmin(user *models.User) bool {
+	zap.L().Debug("User.repo.crateAdmin", zap.Reflect("admin", user))
 
+	if r.db.Where("mail = ?", user.Mail).Updates(&user).RowsAffected == 0 {
+		_, err := r.create(user)
 		if err != nil {
 			zap.L().Error("Create Admin Data Error : ", zap.Error(err))
 		}
+
+		return true
 	}
+	return false
 }
 
 func (r *AuthRepositoy) Migration() {

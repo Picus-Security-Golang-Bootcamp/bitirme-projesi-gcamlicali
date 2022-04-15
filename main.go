@@ -89,12 +89,6 @@ func main() {
 	productService := product.NewProductService(productRepo, categoryRepo)
 	product.NewProductHandler(productRouter, productService, cfg)
 
-	authRepo := auth.NewAuthRepository(DB)
-	authRepo.Migration()
-	authRepo.FillAdminData()
-	authService := auth.NewAuthService(*authRepo, cfg)
-	auth.NewAuthHandler(authRooter, authService)
-
 	cartItemRepo := cart_item.NewCartItemRepository(DB)
 	cartItemRepo.Migration()
 
@@ -102,6 +96,12 @@ func main() {
 	cartRepo.Migration()
 	cartService := cart.NewCartService(cartRepo, cartItemRepo, productRepo)
 	cart.NewCartHandler(cartRouter, cartService)
+
+	authRepo := auth.NewAuthRepository(DB)
+	authRepo.Migration()
+	authService := auth.NewAuthService(*authRepo, *cartRepo, cfg)
+	authService.FillAdminData()
+	auth.NewAuthHandler(authRooter, authService)
 
 	orderRepo := order.NewOrderRepository(DB)
 	orderRepo.Migration()
