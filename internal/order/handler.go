@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 	"net/http"
+	"strconv"
 )
 
 type orderHandler struct {
@@ -14,7 +15,8 @@ type orderHandler struct {
 func NewOrderHandler(r *gin.RouterGroup, service Service) {
 	h := &orderHandler{service: service}
 	r.GET("/", h.getAll)
-	r.POST("", h.add)
+	r.POST("/", h.add)
+	r.PUT("/:id", h.cancel)
 }
 
 func (o *orderHandler) getAll(c *gin.Context) {
@@ -30,7 +32,7 @@ func (o *orderHandler) getAll(c *gin.Context) {
 		c.JSON(httpErr.ErrorResponse(err))
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, ordersToResponse(*orders))
 
 }
@@ -52,4 +54,27 @@ func (o *orderHandler) add(c *gin.Context) {
 
 	c.JSON(http.StatusOK, OrderToResponse(order))
 
+}
+
+func (o *orderHandler) cancel(c *gin.Context) {
+	userID, isExist := c.Get("userId")
+	if !isExist {
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "User not found", nil)))
+		return
+	}
+	userid := cast.ToInt(userID)
+
+	orderID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err)))
+	}
+
+	err = o.service.Cancel(userid, orderID)
+
+	if err != nil {
+		c.JSON(httpErr.ErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, "Order Cancel Complete")
 }

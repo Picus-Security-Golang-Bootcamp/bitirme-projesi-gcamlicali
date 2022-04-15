@@ -6,10 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cast"
-	"log"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type cartHandler struct {
@@ -40,10 +38,6 @@ func (ch *cartHandler) get(c *gin.Context) {
 		return
 	}
 
-	ExpireDate := cart.CreatedAt.Add(14 * 24 * time.Hour)
-
-	log.Println("ExpireDate: ", ExpireDate)
-	log.Println(time.Now().After(ExpireDate))
 	c.JSON(http.StatusOK, CartToResponse(cart))
 }
 

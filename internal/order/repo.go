@@ -23,6 +23,18 @@ func (r *OrderRepositoy) Create(a *models.Order) (*models.Order, error) {
 	return a, nil
 }
 
+func (r *OrderRepositoy) GetByOrderAndUserID(userID, orderID int) (*models.Order, error) {
+	zap.L().Debug("order.repo.GetByOrderID", zap.Reflect("userID", orderID))
+	var order models.Order
+	err := r.db.Where(&models.Order{UserID: userID}).First(&order, orderID).Error
+	if err != nil {
+		zap.L().Error("order.repo.GetByOrderID failed to get Orders", zap.Error(err))
+		return nil, err
+	}
+	return &order, nil
+
+}
+
 func (r *OrderRepositoy) GetByUserID(userID int) (*[]models.Order, error) {
 	zap.L().Debug("order.repo.GetByUserID", zap.Reflect("userID", userID))
 	var orders []models.Order //duzelt dikkat
