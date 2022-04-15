@@ -25,6 +25,7 @@ func NewCartService(crepo *CartRepositoy, cirepo *cart_item.CartItemRepositoy, p
 	return &cartService{crepo: crepo, cirepo: cirepo, prepo: prepo}
 }
 
+//Get all items from cart and list
 func (c *cartService) Get(userID int) (*models.Cart, error) {
 
 	cart, err := c.crepo.GetByUserID(userID)
@@ -36,6 +37,7 @@ func (c *cartService) Get(userID int) (*models.Cart, error) {
 	return cart, nil
 }
 
+//Add item to cart
 func (c *cartService) Add(userID int, ProductID int) (*models.Cart, error) {
 	cart, err := c.crepo.GetByUserID(userID)
 
@@ -49,7 +51,7 @@ func (c *cartService) Add(userID int, ProductID int) (*models.Cart, error) {
 	}
 
 	cartItem, err := c.cirepo.GetByCartAndProductID(int(cart.ID), ProductID)
-
+	//Duzelt quantity control
 	// If item exists in cart, increase item quantity by 1
 	if cartItem != nil {
 
@@ -89,6 +91,7 @@ func (c *cartService) Add(userID int, ProductID int) (*models.Cart, error) {
 	}
 }
 
+//Update quantity of given cart item
 func (c *cartService) Update(userID int, ProductID int, Quantity int) (*models.Cart, error) {
 	cart, err := c.crepo.GetByUserID(userID)
 
@@ -112,6 +115,7 @@ func (c *cartService) Update(userID int, ProductID int, Quantity int) (*models.C
 	return newCart, nil
 }
 
+//Delete given item from cart
 func (c *cartService) Delete(userID int, ProductID int) (*models.Cart, error) {
 	cart, err := c.crepo.GetByUserID(userID)
 

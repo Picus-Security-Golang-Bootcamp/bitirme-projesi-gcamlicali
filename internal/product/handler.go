@@ -75,6 +75,8 @@ func (p *productHandler) addBulk(c *gin.Context) {
 		proEntity.Description = line[3]
 		price, _ := strconv.Atoi(line[4])
 		proEntity.Price = int32(price)
+		unitStock, _ := strconv.Atoi(line[5])
+		proEntity.UnitStock = int32(unitStock)
 
 		_, err = p.proRepo.create(&proEntity)
 		if err != nil {

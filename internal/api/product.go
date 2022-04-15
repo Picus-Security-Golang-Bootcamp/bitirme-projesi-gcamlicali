@@ -40,6 +40,10 @@ type Product struct {
 	// sku
 	// Required: true
 	Sku *string `json:"sku"`
+
+	// unit stock
+	// Required: true
+	UnitStock *int32 `json:"unitStock"`
 }
 
 // Validate validates this product
@@ -59,6 +63,10 @@ func (m *Product) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateSku(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUnitStock(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -98,6 +106,15 @@ func (m *Product) validatePrice(formats strfmt.Registry) error {
 func (m *Product) validateSku(formats strfmt.Registry) error {
 
 	if err := validate.Required("sku", "body", m.Sku); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Product) validateUnitStock(formats strfmt.Registry) error {
+
+	if err := validate.Required("unitStock", "body", m.UnitStock); err != nil {
 		return err
 	}
 

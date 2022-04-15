@@ -22,6 +22,7 @@ func ProductToResponse(p *models.Product) *api.Product {
 		Name:         &p.Name,
 		Description:  p.Description,
 		Price:        &p.Price,
+		UnitStock:    &p.UnitStock,
 	}
 }
 
@@ -44,5 +45,6 @@ func responseToProduct(p *api.Product) *models.Product {
 		Name:         *p.Name,
 		SKU:          *p.Sku,
 		Description:  p.Description,
+		UnitStock:    *p.UnitStock,
 	}
 }

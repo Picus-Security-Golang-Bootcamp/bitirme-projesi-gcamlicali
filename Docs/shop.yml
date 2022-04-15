@@ -180,14 +180,15 @@ paths:
       summary: "Add bulk products"
       description: "Add from csv file"
       operationId: "addBulkProducts"
+      consumes:
+        - "multipart/form-data"
       produces:
         - "application/json"
       parameters:
-        - in: "body"
+        - in: "formData"
           name: "body"
           required: true
-          schema:
-            $ref: "#/definitions/Product"
+          type: "file"
       responses:
         "200":
           description: "successful operation"
@@ -278,6 +279,8 @@ paths:
       summary: "Add bulk categories"
       description: "Add from csv file"
       operationId: "addBulkCategories"
+      consumes:
+        - "multipart/form-data"
       produces:
         - "application/json"
       parameters:
@@ -303,6 +306,7 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Cart"
+
 
   /cart/{ProductID}:
     post:
@@ -375,6 +379,33 @@ paths:
             $ref: "#/definitions/Cart"
         "405":
           description: "Invalid input"
+  /order:
+    get:
+      tags:
+        - "order"
+      summary: "Show all orders"
+      description: "Show order history"
+      produces:
+        - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Order"
+    post:
+      tags:
+        - "order"
+      summary: "Order the current cart"
+      description: "Order the current cart"
+      produces:
+        - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Order"
 
 definitions:
   Cart:
@@ -430,6 +461,7 @@ definitions:
       - "name"
       - "sku"
       - "price"
+      - "unitStock"
     properties:
       id:
         type: "integer"
@@ -443,6 +475,9 @@ definitions:
       description:
         type: "string"
       price:
+        type: "integer"
+        format: "int32"
+      unitStock:
         type: "integer"
         format: "int32"
   User:

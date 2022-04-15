@@ -10,6 +10,7 @@ type Product struct {
 	SKU          string `gorm:"unique"`
 	Name         string
 	Description  string
+	UnitStock    int32
 	Price        int32
 }
 
