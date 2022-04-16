@@ -23,8 +23,8 @@ func NewCategoryHandler(r *gin.RouterGroup, service Service, cfg *config.Config)
 
 	signedRoute := r.Group("/signed")
 	signedRoute.Use(mw.AuthMiddleware(cfg.JWTConfig.SecretKey))
-	signedRoute.DELETE("/", a.delete)
-	signedRoute.PUT("/", a.update)
+	signedRoute.DELETE("/:Name", a.delete)
+	signedRoute.PUT("/:Name", a.update)
 	signedRoute.POST("/addBulk", a.addBulk)
 	signedRoute.POST("/addSingle", a.addSingle)
 }

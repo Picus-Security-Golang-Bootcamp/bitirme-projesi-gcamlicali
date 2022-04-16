@@ -12,13 +12,15 @@ info:
 basePath: "/api/v1/trade-cart-api"
 tags:
   - name: "user"
-    description: "User operations"
+    description: "User authorization operations"
   - name: "product"
     description: "Product operations"
   - name: "category"
     description: "Category operations"
   - name: "cart"
     description: "User cart operations"
+  - name: "order"
+    description: "User order operations"
 
 
 schemes:
@@ -77,20 +79,6 @@ paths:
               description: "date in UTC when token expires"
         "400":
           description: "Invalid username/password supplied"
-  /user/singout:
-    post:
-      tags:
-        - "user"
-      summary: "Logs out current logged in user session"
-      description: ""
-      operationId: "logoutUser"
-      produces:
-        - "application/xml"
-        - "application/json"
-      parameters: [ ]
-      responses:
-        default:
-          description: "successful operation"
 
   /product/:
     get:
@@ -109,50 +97,47 @@ paths:
           schema:
             $ref: "#/definitions/Product"
 
-  /product/signed/{ProductID}:
-    put:
+  /product/name/{SearchName}:
+    get:
       tags:
         - "product"
-      summary: "Update product properties"
+      summary: "Search by given string in products"
       description: ""
-      operationId: "updateProduct"
+      operationId: "getProductsByName"
       produces:
         - "application/json"
       parameters:
-        - name: "ProductID"
+        - name: "SearchName"
           in: "path"
-          description: "ID of product"
+          description: "SKU of product"
           required: true
-          type: "integer"
-          format: "int64"
-        - in: "body"
-          name: "body"
-          required: true
-          schema:
-            $ref: "#/definitions/Product"
+          type: "string"
       responses:
         "200":
           description: "successful operation"
           schema:
             $ref: "#/definitions/Product"
-    delete:
+
+  /product/sku/{SearchSKU}:
+    get:
       tags:
         - "product"
-      summary: "Delete the Product"
-      description: "Deletes given id product"
-      operationId: "deleteProduct"
+      summary: "Search by given string in products"
+      description: ""
+      operationId: "getProductbySKU"
       produces:
         - "application/json"
       parameters:
-        - name: "ProductID"
+        - name: "SearchSKU"
           in: "path"
-          description: "ID of product"
+          description: "SKU of product"
           required: true
           type: "integer"
-          format: "int64"
       responses:
         "200":
           description: "successful operation"
+          schema:
+            $ref: "#/definitions/Product"
 
   /product/signed/singleItem:
     post:
@@ -192,6 +177,51 @@ paths:
       responses:
         "200":
           description: "successful operation"
+
+  /product/signed/{ProductSKU}:
+    put:
+      tags:
+        - "product"
+      summary: "Update product properties"
+      description: ""
+      operationId: "updateProduct"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "ProductSKU"
+          in: "path"
+          description: "SKU of product"
+          required: true
+          type: "integer"
+          format: "int64"
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Product"
+    delete:
+      tags:
+        - "product"
+      summary: "Delete the Product"
+      description: "Deletes given SKU of product"
+      operationId: "deleteProduct"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "ProductSKU"
+          in: "path"
+          description: "SKU of product"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "successful operation"
   /category/:
     get:
       tags:
@@ -208,50 +238,7 @@ paths:
 
           schema:
             $ref: "#/definitions/Category"
-  /category/signed/{CategoryID}:
-    put:
-      tags:
-        - "category"
-      summary: "Update category properties"
-      description: ""
-      operationId: "updateCategory"
-      produces:
-        - "application/json"
-      parameters:
-        - name: "CategoryID"
-          in: "path"
-          description: "ID of category"
-          required: true
-          type: "integer"
-          format: "int64"
-        - in: "body"
-          name: "body"
-          required: true
-          schema:
-            $ref: "#/definitions/Category"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Category"
-    delete:
-      tags:
-        - "category"
-      summary: "Delete the Category"
-      description: "Deletes given id category"
-      operationId: "deleteCategory"
-      produces:
-        - "application/json"
-      parameters:
-        - name: "CategoryID"
-          in: "path"
-          description: "ID of category"
-          required: true
-          type: "integer"
-          format: "int64"
-      responses:
-        "200":
-          description: "successful operation"
+
 
   /category/signed/singleItem:
     post:
@@ -292,6 +279,50 @@ paths:
       responses:
         "200":
           description: "successful operation"
+
+  /category/signed/{CategoryName}:
+    put:
+      tags:
+        - "category"
+      summary: "Update category properties"
+      description: ""
+      operationId: "updateCategory"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "CategoryName"
+          in: "path"
+          description: "Name of category"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/Category"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Category"
+    delete:
+      tags:
+        - "category"
+      summary: "Delete the Category"
+      description: "Deletes given id category"
+      operationId: "deleteCategory"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "CategoryName"
+          in: "path"
+          description: "Name of category"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+
   /cart:
     get:
       tags:
@@ -407,6 +438,22 @@ paths:
           schema:
             $ref: "#/definitions/Order"
 
+  /order/{orderID}:
+    delete:
+      tags:
+        - "order"
+      summary: "Cancel given ID order"
+      produces: []
+      parameters:
+        - name: "orderID"
+          in: "path"
+          description: "ID of order that want to cancel "
+          required: true
+          type: "integer"
+      responses:
+        "200":
+          description: "order cancelled"
+
 definitions:
   Cart:
     type: "object"
@@ -436,8 +483,6 @@ definitions:
     required:
       - "name"
     properties:
-      id:
-        type: "string"
       name:
         type: "string"
   Order:

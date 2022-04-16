@@ -7,7 +7,6 @@ import (
 
 func catModelToApi(a *models.Category) *api.Category {
 	return &api.Category{
-		ID:   a.ID.String(),
 		Name: a.Name,
 	}
 
