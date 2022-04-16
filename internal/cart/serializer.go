@@ -14,7 +14,7 @@ func CartToResponse(a *models.Cart) *api.Cart {
 	}
 
 	return &api.Cart{
-		ID:        int64(a.ID),
+		ID:        a.ID.String(),
 		CartItems: items,
 	}
 }

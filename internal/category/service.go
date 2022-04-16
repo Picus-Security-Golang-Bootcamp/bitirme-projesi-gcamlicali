@@ -5,7 +5,6 @@ import (
 	"github.com/gcamlicali/tradeshopExample/internal/api"
 	httpErr "github.com/gcamlicali/tradeshopExample/internal/httpErrors"
 	"github.com/gcamlicali/tradeshopExample/internal/models"
-	"github.com/gcamlicali/tradeshopExample/internal/product"
 	csvRead "github.com/gcamlicali/tradeshopExample/pkg/csv"
 	"gorm.io/gorm"
 	"mime/multipart"
@@ -13,8 +12,7 @@ import (
 )
 
 type categoryService struct {
-	repo  *CategoryRepositoy
-	prepo *product.ProductRepositoy
+	repo *CategoryRepositoy
 }
 
 type Service interface {
@@ -27,8 +25,8 @@ type Service interface {
 	AddSingle(category api.Category) (*models.Category, error)
 }
 
-func NewCategoryService(repo *CategoryRepositoy, prepo *product.ProductRepositoy) Service {
-	return &categoryService{repo: repo, prepo: prepo}
+func NewCategoryService(repo *CategoryRepositoy) Service {
+	return &categoryService{repo: repo}
 }
 
 func (c categoryService) Create(a *models.Category) (*models.Category, error) {

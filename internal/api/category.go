@@ -20,7 +20,7 @@ import (
 type Category struct {
 
 	// id
-	ID int64 `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	// name
 	// Required: true

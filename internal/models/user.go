@@ -2,18 +2,24 @@ package models
 
 import (
 	"encoding/json"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 )
 
 type User struct {
-	gorm.Model
-	Mail      *string `gorm:"unique" json:"email"`
-	Password  *string `json:"password"`
-	FirstName *string `json:"firstName"`
-	LastName  *string `json:"lastName"`
+	//gorm.Model
+	ID        uuid.UUID `gorm:"primary_key; type:uuid; default:uuid_generate_v4()"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+	Mail      *string        `gorm:"unique" json:"email"`
+	Password  *string        `json:"password"`
+	FirstName *string        `json:"firstName"`
+	LastName  *string        `json:"lastName"`
 	Mobile    string
 	IsAdmin   bool
 }

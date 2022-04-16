@@ -7,9 +7,10 @@ import (
 
 func OrderToResponse(m *models.Order) *api.Order {
 	return &api.Order{
-		ID:         int64(m.ID),
-		UserID:     int64(m.UserID),
-		CartID:     int64(m.CartID),
+		ID:         m.ID.String(),
+		UserID:     m.UserID.String(),
+		CartID:     m.CartID.String(),
+		Status:     m.Status,
 		TotalPrice: m.TotalPrice,
 	}
 }

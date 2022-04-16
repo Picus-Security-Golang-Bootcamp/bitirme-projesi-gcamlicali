@@ -1,14 +1,21 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+	"time"
+)
 
 type CartItem struct {
-	gorm.Model
-	Quantity  int
-	Product   Product `gorm:"ForeignKey:ID;references:ProductID"`
-	ProductID int
-	CartID    int
-	Price     int
+	ID         uuid.UUID `gorm:"primary_key; type:uuid; default:uuid_generate_v4()"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	Quantity   int
+	Product    Product `gorm:"ForeignKey:SKU;references:ProductSKU"`
+	ProductSKU int
+	CartID     uuid.UUID
+	Price      int
 }
 
 func (CartItem) TableName() string {

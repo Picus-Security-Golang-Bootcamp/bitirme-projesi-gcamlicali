@@ -8,7 +8,9 @@ require (
 	github.com/go-openapi/strfmt v0.21.2
 	github.com/go-openapi/swag v0.21.1
 	github.com/go-openapi/validate v0.21.0
+	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/google/uuid v1.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cast v1.4.1
 	github.com/spf13/viper v1.10.1

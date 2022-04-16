@@ -2,6 +2,7 @@ package order
 
 import (
 	"github.com/gcamlicali/tradeshopExample/internal/models"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -23,10 +24,13 @@ func (r *OrderRepositoy) Create(a *models.Order) (*models.Order, error) {
 	return a, nil
 }
 
-func (r *OrderRepositoy) GetByOrderAndUserID(userID, orderID int) (*models.Order, error) {
+func (r *OrderRepositoy) GetByOrderAndUserID(userID uuid.UUID, orderID uuid.UUID) (*models.Order, error) {
 	zap.L().Debug("order.repo.GetByOrderID", zap.Reflect("userID", orderID))
 	var order models.Order
-	err := r.db.Where(&models.Order{UserID: userID}).First(&order, orderID).Error
+	err := r.db.
+		Where(&models.Order{UserID: userID}).
+		Where(&models.Order{ID: orderID}).
+		First(&order).Error
 	if err != nil {
 		zap.L().Error("order.repo.GetByOrderID failed to get Orders", zap.Error(err))
 		return nil, err
@@ -35,8 +39,8 @@ func (r *OrderRepositoy) GetByOrderAndUserID(userID, orderID int) (*models.Order
 
 }
 
-func (r *OrderRepositoy) GetByUserID(userID int) (*[]models.Order, error) {
-	zap.L().Debug("order.repo.GetByUserID", zap.Reflect("userID", userID))
+func (r *OrderRepositoy) GetByUserID(userID uuid.UUID) (*[]models.Order, error) {
+	zap.L().Debug("order.repo.GetByUserID", zap.Reflect("userID", userID.String()))
 	var orders []models.Order
 	err := r.db.Where(&models.Order{UserID: userID}).Find(&orders).Error
 	if err != nil {

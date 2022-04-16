@@ -3,17 +3,10 @@ package product
 import (
 	"github.com/gcamlicali/tradeshopExample/internal/api"
 	"github.com/gcamlicali/tradeshopExample/internal/models"
-	"gorm.io/gorm"
 )
 
 //Data Transfer Object
 func ProductToResponse(p *models.Product) *api.Product {
-	//code
-	//code
-	//log.Println("CategoryName: ", &p.CategoryName)
-	//log.Println("ID: ", int64(p.ID))
-	//log.Println("Sku: ", &p.SKU)
-	//log.Println("Desc: ", p.Description)
 	int64Sku := int64(p.SKU)
 	return &api.Product{
 
@@ -40,7 +33,6 @@ func productsToResponse(ps []models.Product) []*api.Product {
 
 func responseToProduct(p *api.Product) *models.Product {
 	return &models.Product{
-		Model:        gorm.Model{},
 		CategoryName: *p.CategoryName,
 		Name:         *p.Name,
 		SKU:          int(*p.Sku),

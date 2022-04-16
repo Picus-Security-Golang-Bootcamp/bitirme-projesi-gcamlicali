@@ -5,6 +5,7 @@ import (
 	httpErr "github.com/gcamlicali/tradeshopExample/internal/httpErrors"
 	"github.com/gcamlicali/tradeshopExample/internal/models"
 	"github.com/gcamlicali/tradeshopExample/internal/product"
+	"github.com/google/uuid"
 	"net/http"
 )
 
@@ -15,10 +16,10 @@ type cartService struct {
 }
 
 type Service interface {
-	Get(userID int) (*models.Cart, error)
-	Add(userID int, ProductID int) (*models.Cart, error)
-	Update(userID int, ProductID int, Quantity int) (*models.Cart, error)
-	Delete(userID int, ProductID int) (*models.Cart, error)
+	Get(userID uuid.UUID) (*models.Cart, error)
+	Add(userID uuid.UUID, ProductID int) (*models.Cart, error)
+	Update(userID uuid.UUID, ProductID int, Quantity int) (*models.Cart, error)
+	Delete(userID uuid.UUID, ProductID int) (*models.Cart, error)
 }
 
 func NewCartService(crepo *CartRepositoy, cirepo *cart_item.CartItemRepositoy, prepo *product.ProductRepositoy) Service {
@@ -26,7 +27,7 @@ func NewCartService(crepo *CartRepositoy, cirepo *cart_item.CartItemRepositoy, p
 }
 
 //Get all items from cart and list
-func (c *cartService) Get(userID int) (*models.Cart, error) {
+func (c *cartService) Get(userID uuid.UUID) (*models.Cart, error) {
 
 	cart, err := c.crepo.GetByUserID(userID)
 	if err != nil {
@@ -37,19 +38,19 @@ func (c *cartService) Get(userID int) (*models.Cart, error) {
 }
 
 //Add item to cart
-func (c *cartService) Add(userID int, ProductID int) (*models.Cart, error) {
+func (c *cartService) Add(userID uuid.UUID, ProductSKU int) (*models.Cart, error) {
 
 	cart, err := c.crepo.GetByUserID(userID) // duzelt kontrol edilecek bu error
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart get error", err.Error())
 	}
 
-	product, err := c.prepo.GetByID(ProductID) // duzelt kontrol edilecek bu error
+	product, err := c.prepo.GetBySKU(ProductSKU) // duzelt kontrol edilecek bu error
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
 	}
 
-	cartItem, err := c.cirepo.GetByCartAndProductID(int(cart.ID), ProductID)
+	cartItem, err := c.cirepo.GetByCartAndProductSKU(cart.ID, ProductSKU)
 
 	// If item exists in cart, increase item quantity by 1
 	if cartItem != nil {
@@ -71,10 +72,10 @@ func (c *cartService) Add(userID int, ProductID int) (*models.Cart, error) {
 		// If item does not exist in cart, create new item
 
 		newCartItem := models.CartItem{
-			Quantity:  1,
-			Price:     int(product.Price),
-			ProductID: int(product.ID),
-			Product:   *product,
+			Quantity:   1,
+			Price:      int(product.Price),
+			ProductSKU: product.SKU,
+			Product:    *product,
 		}
 
 		addItem, err := c.cirepo.Crate(&newCartItem)
@@ -94,7 +95,7 @@ func (c *cartService) Add(userID int, ProductID int) (*models.Cart, error) {
 }
 
 //Update quantity of given cart item
-func (c *cartService) Update(userID int, ProductID int, Quantity int) (*models.Cart, error) {
+func (c *cartService) Update(userID uuid.UUID, ProductSKU int, Quantity int) (*models.Cart, error) {
 
 	cart, err := c.crepo.GetByUserID(userID)
 	if err != nil {
@@ -105,7 +106,7 @@ func (c *cartService) Update(userID int, ProductID int, Quantity int) (*models.C
 		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart error", err.Error())
 	}
 
-	cartItem, err := c.cirepo.GetByCartAndProductID(int(cart.ID), ProductID)
+	cartItem, err := c.cirepo.GetByCartAndProductSKU(cart.ID, ProductSKU)
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
 	}
@@ -125,13 +126,13 @@ func (c *cartService) Update(userID int, ProductID int, Quantity int) (*models.C
 }
 
 //Delete given item from cart
-func (c *cartService) Delete(userID int, ProductID int) (*models.Cart, error) {
+func (c *cartService) Delete(userID uuid.UUID, ProductSKU int) (*models.Cart, error) {
 	cart, err := c.crepo.GetByUserID(userID)
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Get Cart error", err.Error())
 	}
 
-	cartItem, err := c.cirepo.GetByCartAndProductID(int(cart.ID), ProductID)
+	cartItem, err := c.cirepo.GetByCartAndProductSKU(cart.ID, ProductSKU)
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
 	}

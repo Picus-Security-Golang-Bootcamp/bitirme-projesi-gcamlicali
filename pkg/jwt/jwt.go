@@ -3,14 +3,15 @@ package jwt_helper
 import (
 	"encoding/json"
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 )
 
 type DecodedToken struct {
-	Iat     int    `json:"iat"`
-	IsAdmin bool   `json:"roles"`
-	UserId  int    `json:"userId"`
-	Email   string `json:"email"`
-	Iss     string `json:"iss"`
+	Iat     int       `json:"iat"`
+	IsAdmin bool      `json:"roles"`
+	UserId  uuid.UUID `json:"userId"`
+	Email   string    `json:"email"`
+	Iss     string    `json:"iss"`
 }
 
 func GenerateToken(claims *jwt.Token, secret string) string {

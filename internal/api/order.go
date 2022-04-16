@@ -18,16 +18,19 @@ import (
 type Order struct {
 
 	// cart id
-	CartID int64 `json:"cart_id,omitempty"`
+	CartID string `json:"cart_id,omitempty"`
 
 	// id
-	ID int64 `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
+
+	// status
+	Status string `json:"status,omitempty"`
 
 	// total price
 	TotalPrice int32 `json:"total_price,omitempty"`
 
 	// user id
-	UserID int64 `json:"user_id,omitempty"`
+	UserID string `json:"user_id,omitempty"`
 }
 
 // Validate validates this order

@@ -2,6 +2,7 @@ package cart_item
 
 import (
 	"github.com/gcamlicali/tradeshopExample/internal/models"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -23,7 +24,7 @@ func (ci *CartItemRepositoy) Crate(a *models.CartItem) (*models.CartItem, error)
 	return a, nil
 
 }
-func (ci *CartItemRepositoy) GetByCartID(cartID int) ([]models.CartItem, error) {
+func (ci *CartItemRepositoy) GetByCartID(cartID uuid.UUID) ([]models.CartItem, error) {
 	zap.L().Debug("cartitem.repo.getByCartID", zap.Reflect("CartID", cartID))
 	var cartItems = []models.CartItem{}
 	err := ci.db.Where(&models.CartItem{CartID: cartID}).Find(&cartItems).Error
@@ -35,10 +36,10 @@ func (ci *CartItemRepositoy) GetByCartID(cartID int) ([]models.CartItem, error) 
 
 }
 
-func (ci *CartItemRepositoy) GetByCartAndProductID(cartID int, productID int) (*models.CartItem, error) {
+func (ci *CartItemRepositoy) GetByCartAndProductSKU(cartID uuid.UUID, productSKU int) (*models.CartItem, error) {
 	zap.L().Debug("cartitem.repo.getByCartID", zap.Reflect("CartID", cartID))
 	cartItem := models.CartItem{}
-	err := ci.db.Where(&models.CartItem{CartID: cartID, ProductID: productID}).First(&cartItem).Error
+	err := ci.db.Where(&models.CartItem{CartID: cartID, ProductSKU: productSKU}).First(&cartItem).Error
 	if err != nil {
 		zap.L().Error("cartitem.repo.GetByProductID failed to get CartItems", zap.Error(err))
 		return nil, err

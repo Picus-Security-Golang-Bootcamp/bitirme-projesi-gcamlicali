@@ -23,7 +23,7 @@ type Cart struct {
 	CartItems []*CartItem `json:"cart_items"`
 
 	// id
-	ID int64 `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 }
 
 // Validate validates this cart

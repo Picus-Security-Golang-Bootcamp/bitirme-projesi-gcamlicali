@@ -2,6 +2,7 @@ package cart
 
 import (
 	"github.com/gcamlicali/tradeshopExample/internal/models"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -24,7 +25,7 @@ func (r *CartRepositoy) Create(a *models.Cart) (*models.Cart, error) {
 	return a, nil
 }
 
-func (r *CartRepositoy) GetByUserID(userID int) (*models.Cart, error) {
+func (r *CartRepositoy) GetByUserID(userID uuid.UUID) (*models.Cart, error) {
 	zap.L().Debug("cart.repo.GetByUserID", zap.Reflect("userID", userID))
 
 	var cart = &models.Cart{}

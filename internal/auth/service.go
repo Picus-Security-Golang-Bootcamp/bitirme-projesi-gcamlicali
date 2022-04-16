@@ -91,7 +91,7 @@ func (a *authService) SignUp(login *api.User) (string, error) {
 
 	//Initial, create a new cart for user
 	var cart = &models.Cart{}
-	cart.UserID = int(createdUser.ID)
+	cart.UserID = createdUser.ID
 	_, err = a.cRepo.Create(cart)
 	if err != nil {
 		return "", httpErr.NewRestError(http.StatusInternalServerError, "Can't create new cart for new user", err.Error())
@@ -115,7 +115,7 @@ func (a *authService) FillAdminData() {
 	//If new admin created, create a cart for admin
 	if isNew {
 		var cart = &models.Cart{}
-		cart.UserID = int(admin.ID)
+		cart.UserID = admin.ID
 		_, err := a.cRepo.Create(cart)
 
 		if err != nil {

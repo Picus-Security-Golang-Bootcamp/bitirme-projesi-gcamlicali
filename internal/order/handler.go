@@ -3,9 +3,8 @@ package order
 import (
 	httpErr "github.com/gcamlicali/tradeshopExample/internal/httpErrors"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/cast"
+	"github.com/google/uuid"
 	"net/http"
-	"strconv"
 )
 
 type orderHandler struct {
@@ -20,14 +19,14 @@ func NewOrderHandler(r *gin.RouterGroup, service Service) {
 }
 
 func (o *orderHandler) getAll(c *gin.Context) {
-	userID, isExist := c.Get("userId")
+	userid, isExist := c.Get("userId")
 	if !isExist {
 		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "User not found", nil)))
 		return
 	}
-	userid := cast.ToInt(userID)
-
-	orders, err := o.service.GetAll(userid)
+	//userid := cast.ToInt(userID)
+	userID := userid.(uuid.UUID)
+	orders, err := o.service.GetAll(userID)
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(err))
 		return
@@ -38,14 +37,14 @@ func (o *orderHandler) getAll(c *gin.Context) {
 }
 
 func (o *orderHandler) add(c *gin.Context) {
-	userID, isExist := c.Get("userId")
+	userid, isExist := c.Get("userId")
 	if !isExist {
 		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "User not found", nil)))
 		return
 	}
-	userid := cast.ToInt(userID)
-
-	order, err := o.service.Create(userid)
+	//userid := cast.ToInt(userID)
+	userID := userid.(uuid.UUID)
+	order, err := o.service.Create(userID)
 
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(err))
@@ -57,19 +56,16 @@ func (o *orderHandler) add(c *gin.Context) {
 }
 
 func (o *orderHandler) cancel(c *gin.Context) {
-	userID, isExist := c.Get("userId")
+	userid, isExist := c.Get("userId")
 	if !isExist {
 		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "User not found", nil)))
 		return
 	}
-	userid := cast.ToInt(userID)
+	//userID := cast.ToInt(userID)
+	userID := userid.(uuid.UUID)
+	orderID, err := uuid.FromBytes([]byte((c.Param("id"))))
 
-	orderID, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err.Error())))
-	}
-
-	err = o.service.Cancel(userid, orderID)
+	err = o.service.Cancel(userID, orderID)
 
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(err))

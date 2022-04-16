@@ -5,7 +5,7 @@ import (
 	httpErr "github.com/gcamlicali/tradeshopExample/internal/httpErrors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-openapi/strfmt"
-	"github.com/spf13/cast"
+	"github.com/google/uuid"
 	"net/http"
 	"strconv"
 )
@@ -18,20 +18,21 @@ func NewCartHandler(r *gin.RouterGroup, service Service) {
 	h := &cartHandler{service: service}
 
 	r.GET("/", h.get)
-	r.POST("/:id", h.add)
-	r.PUT("/:id", h.update)
-	r.DELETE("/:id", h.delete)
+	r.POST("/:SKU", h.add)
+	r.PUT("/:SKU", h.update)
+	r.DELETE("/:SKU", h.delete)
 }
 
 func (ch *cartHandler) get(c *gin.Context) {
-	userID, isExist := c.Get("userId")
+	userid, isExist := c.Get("userId")
 	if !isExist {
 		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "User not found", nil)))
 		return
 	}
-	userid := cast.ToInt(userID)
+	//userid := cast.ToInt(userID)
+	userID := userid.(uuid.UUID)
 
-	cart, err := ch.service.Get(userid)
+	cart, err := ch.service.Get(userID)
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(err))
 		return
@@ -46,11 +47,11 @@ func (ch *cartHandler) add(c *gin.Context) {
 		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "User not found", nil)))
 		return
 	}
-	userID := cast.ToInt(userid)
-
-	paramID, err := strconv.Atoi(c.Param("id"))
+	//userID := cast.ToString(userid)
+	userID := userid.(uuid.UUID)
+	paramID, err := strconv.Atoi(c.Param("SKU"))
 	if err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err.Error())))
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "SKU is not integer", err.Error())))
 	}
 
 	cart, err := ch.service.Add(userID, paramID)
@@ -69,9 +70,9 @@ func (ch *cartHandler) update(c *gin.Context) {
 		return
 	}
 
-	paramID, err := strconv.Atoi(c.Param("id"))
+	paramID, err := strconv.Atoi(c.Param("SKU"))
 	if err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err.Error())))
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "SKU is not integer", err.Error())))
 	}
 	reqQuantity := api.ItemQuantity{}
 	if err := c.Bind(&reqQuantity); err != nil {
@@ -83,7 +84,8 @@ func (ch *cartHandler) update(c *gin.Context) {
 		return
 	}
 
-	userID := cast.ToInt(userid)
+	//userID := cast.ToInt(userid)
+	userID := userid.(uuid.UUID)
 	Quantity := int(*reqQuantity.Quantity)
 
 	cart, err := ch.service.Update(userID, paramID, Quantity)
@@ -102,13 +104,13 @@ func (ch *cartHandler) delete(c *gin.Context) {
 		return
 	}
 
-	paramID, err := strconv.Atoi(c.Param("id"))
+	paramID, err := strconv.Atoi(c.Param("SKU"))
 	if err != nil {
-		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "id is not integer", err.Error())))
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "SKU is not integer", err.Error())))
 	}
 
-	userID := cast.ToInt(userid)
-
+	//userID := cast.ToInt(userid)
+	userID := userid.(uuid.UUID)
 	cart, err := ch.service.Delete(userID, paramID)
 	if err != nil {
 		c.JSON(httpErr.ErrorResponse(err))
