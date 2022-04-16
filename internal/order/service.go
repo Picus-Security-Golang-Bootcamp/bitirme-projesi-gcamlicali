@@ -72,7 +72,7 @@ func (c *orderService) Create(userID uuid.UUID) (*models.Order, error) {
 		UserID:     userID,
 		Cart:       *cart,
 		Status:     "Ordered",
-		TotalPrice: 33,
+		TotalPrice: int32(cart.TotalPrice),
 	}
 	order, err := c.orRepo.Create(&newOrder)
 	if err != nil {

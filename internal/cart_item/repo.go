@@ -40,6 +40,7 @@ func (ci *CartItemRepositoy) GetByCartAndProductSKU(cartID uuid.UUID, productSKU
 	zap.L().Debug("cartitem.repo.getByCartID", zap.Reflect("CartID", cartID))
 	cartItem := models.CartItem{}
 	err := ci.db.Where(&models.CartItem{CartID: cartID, ProductSKU: productSKU}).First(&cartItem).Error
+
 	if err != nil {
 		zap.L().Error("cartitem.repo.GetByProductID failed to get CartItems", zap.Error(err))
 		return nil, err

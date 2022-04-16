@@ -417,6 +417,9 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Cart_Item"
+      totalPrice:
+        type: "integer"
+        format: "int32"
   Cart_Item:
     type: "object"
     properties:

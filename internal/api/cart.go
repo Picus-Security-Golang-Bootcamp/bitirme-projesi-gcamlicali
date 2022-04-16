@@ -24,6 +24,9 @@ type Cart struct {
 
 	// id
 	ID string `json:"id,omitempty"`
+
+	// total price
+	TotalPrice int32 `json:"totalPrice,omitempty"`
 }
 
 // Validate validates this cart

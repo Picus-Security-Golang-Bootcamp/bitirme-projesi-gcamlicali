@@ -8,13 +8,14 @@ import (
 //Data Transfer Object
 func ProductToResponse(p *models.Product) *api.Product {
 	int64Sku := int64(p.SKU)
+	int32Price := int32(p.Price)
 	return &api.Product{
 
 		CategoryName: &p.CategoryName,
 		Sku:          &int64Sku,
 		Name:         &p.Name,
 		Description:  p.Description,
-		Price:        &p.Price,
+		Price:        &int32Price,
 		UnitStock:    &p.UnitStock,
 	}
 }

@@ -58,7 +58,7 @@ func (p *productService) AddBulk(file multipart.File) error {
 			//c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "Price is not integer", proEntity.Name)))
 			continue
 		}
-		proEntity.Price = int32(price)
+		proEntity.Price = price
 		unitStock, err := strconv.Atoi(line[5])
 		if err != nil {
 			//c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "UnitStock is not integer", proEntity.Name)))
@@ -144,7 +144,7 @@ func (c productService) Update(SKU int, reqProduct *api.ProductUp) (*models.Prod
 		product.Description = reqProduct.Description
 	}
 	if reqProduct.Price != 0 {
-		product.Price = reqProduct.Price
+		product.Price = int(reqProduct.Price)
 	}
 	if reqProduct.Sku != 0 {
 		product.SKU = int(reqProduct.Sku)

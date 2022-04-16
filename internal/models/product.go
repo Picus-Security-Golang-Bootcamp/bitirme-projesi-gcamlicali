@@ -16,7 +16,7 @@ type Product struct {
 	Name         string
 	Description  string
 	UnitStock    int32
-	Price        int32
+	Price        int
 }
 
 func (Product) TableName() string {
