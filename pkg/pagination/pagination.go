@@ -2,7 +2,6 @@ package pagination
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -67,9 +66,6 @@ func NewFromGinRequest(g *gin.Context, count int) *Pages {
 	page := parseInt(g.Query(PageVar), 1)
 	pageSize := parseInt(g.Query(PageSizeVar), DefaultPageSize)
 
-	log.Println("page NewFromGinRequest: ", page)
-	log.Println("pageSize NewFromGinRequest: ", pageSize)
-	log.Println("count NewFromGinRequest: ", count)
 	return New(page, pageSize, count)
 }
 

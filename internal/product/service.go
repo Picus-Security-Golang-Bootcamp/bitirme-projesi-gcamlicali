@@ -24,6 +24,8 @@ type Service interface {
 	GetAll(pageIndex, pageSize int) (*[]models.Product, int, error)
 	Delete(SKU int) error
 	Update(SKU int, reqProduct *api.ProductUp) (*models.Product, error)
+	GetByName(name string) (*[]models.Product, error)
+	GetBySKU(SKU int) (*models.Product, error)
 }
 
 func NewProductService(pRepo *ProductRepositoy, catRepo *category.CategoryRepositoy) Service {
@@ -76,17 +78,16 @@ func (p *productService) AddBulk(file multipart.File) error {
 	return nil
 }
 
-func (c productService) AddSingle(product api.Product) (*models.Product, error) {
-
-	category, err := c.catRepo.GetByName(*product.Name)
+func (p productService) AddSingle(product api.Product) (*models.Product, error) {
+	category, err := p.catRepo.GetByName(*product.Name)
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusNotFound, "Category not found", err.Error())
 	}
 
 	prod := responseToProduct(&product)
 	prod.CategoryName = *category.Name
-	//log.Println("prod cat id: ", prod.CategoryID)
-	NewProduct, err := c.pRepo.create(prod)
+
+	NewProduct, err := p.pRepo.create(prod)
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Can not create new product", err.Error())
 	}
@@ -94,18 +95,18 @@ func (c productService) AddSingle(product api.Product) (*models.Product, error) 
 	return NewProduct, nil
 }
 
-func (c productService) GetAll(pageIndex, pageSize int) (*[]models.Product, int, error) {
+func (p productService) GetAll(pageIndex, pageSize int) (*[]models.Product, int, error) {
 
-	categories, count, err := c.pRepo.getAll(pageIndex, pageSize)
+	products, count, err := p.pRepo.getAll(pageIndex, pageSize)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	return categories, count, nil
+	return products, count, nil
 }
 
-func (c productService) Delete(SKU int) error {
-	err := c.pRepo.deleteBySku(SKU)
+func (p productService) Delete(SKU int) error {
+	err := p.pRepo.deleteBySku(SKU)
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
@@ -118,8 +119,8 @@ func (c productService) Delete(SKU int) error {
 	return nil
 }
 
-func (c productService) Update(SKU int, reqProduct *api.ProductUp) (*models.Product, error) {
-	product, err := c.pRepo.GetBySKU(SKU)
+func (p productService) Update(SKU int, reqProduct *api.ProductUp) (*models.Product, error) {
+	product, err := p.pRepo.GetBySKU(SKU)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
 	}
@@ -132,7 +133,7 @@ func (c productService) Update(SKU int, reqProduct *api.ProductUp) (*models.Prod
 	}
 	if reqProduct.CategoryName != "" {
 		//check category name of product
-		cat, _ := c.catRepo.GetByName(reqProduct.CategoryName)
+		cat, _ := p.catRepo.GetByName(reqProduct.CategoryName)
 		if cat == nil {
 			return nil, httpErr.NewRestError(http.StatusBadRequest, "Product category name not found", err.Error())
 		}
@@ -153,11 +154,35 @@ func (c productService) Update(SKU int, reqProduct *api.ProductUp) (*models.Prod
 		product.UnitStock = reqProduct.UnitStock
 	}
 
-	updatedProduct, err := c.pRepo.Update(product)
+	updatedProduct, err := p.pRepo.Update(product)
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Update product error", err.Error())
 	}
 
 	return updatedProduct, nil
 
+}
+
+func (p productService) GetByName(name string) (*[]models.Product, error) {
+	products, err := p.pRepo.GetByName(name)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
+	}
+	if err != nil {
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Get product error", err.Error())
+	}
+
+	return products, nil
+}
+
+func (p productService) GetBySKU(SKU int) (*models.Product, error) {
+	product, err := p.pRepo.GetBySKU(SKU)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
+	}
+	if err != nil {
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Get product error", err.Error())
+	}
+
+	return product, nil
 }

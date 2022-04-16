@@ -21,6 +21,8 @@ func NewProductHandler(r *gin.RouterGroup, service Service, cfg *config.Config) 
 	h := &productHandler{service: service}
 
 	r.GET("/", h.getAll)
+	r.GET("/sku/:SKU", h.getBySKU)
+	r.GET("/name/:NAME", h.getByName)
 
 	signedRoute := r.Group("/signed")
 	signedRoute.Use(mw.AuthMiddleware(cfg.JWTConfig.SecretKey))
@@ -162,4 +164,34 @@ func (p *productHandler) update(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, ProductToResponse(updatedProduct))
+}
+
+func (p *productHandler) getByName(c *gin.Context) {
+
+	name := c.Param("NAME")
+
+	products, err := p.service.GetByName(name)
+	if err != nil {
+		c.JSON(httpErr.ErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, productsToResponse(*products))
+}
+
+func (p *productHandler) getBySKU(c *gin.Context) {
+
+	SKU, err := strconv.Atoi(c.Param("SKU"))
+	if err != nil {
+		c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, "SKU is not integer", err.Error())))
+		return
+	}
+
+	product, err := p.service.GetBySKU(SKU)
+	if err != nil {
+		c.JSON(httpErr.ErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, ProductToResponse(product))
 }

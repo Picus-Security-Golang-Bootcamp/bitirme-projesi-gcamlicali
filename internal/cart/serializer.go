@@ -4,7 +4,6 @@ import (
 	"github.com/gcamlicali/tradeshopExample/internal/api"
 	"github.com/gcamlicali/tradeshopExample/internal/cart_item"
 	"github.com/gcamlicali/tradeshopExample/internal/models"
-	"log"
 )
 
 func CartToResponse(a *models.Cart) *api.Cart {
@@ -13,7 +12,6 @@ func CartToResponse(a *models.Cart) *api.Cart {
 
 		items = append(items, cart_item.CartItemtoResponse(&a.CartItems[i]))
 	}
-	log.Println("TotalPrice; ", a.TotalPrice)
 	return &api.Cart{
 		ID:         a.ID.String(),
 		CartItems:  items,

@@ -1,11 +1,9 @@
 package product
 
 import (
-	"errors"
 	"github.com/gcamlicali/tradeshopExample/internal/models"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"log"
 )
 
 type ProductRepositoy struct {
@@ -41,6 +39,20 @@ func (r *ProductRepositoy) getAll(pageIndex, pageSize int) (*[]models.Product, i
 	return ps, int(count), nil
 }
 
+func (r *ProductRepositoy) GetByName(name string) (*[]models.Product, error) {
+	zap.L().Debug("product.repo.getByName", zap.Reflect("name", name))
+
+	var products = &[]models.Product{}
+
+	err := r.db.Where("name ILIKE ? ", "%"+name+"%").
+		Find(&products).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}
+
 func (r *ProductRepositoy) GetByID(id int) (*models.Product, error) {
 	zap.L().Debug("product.repo.getByID", zap.Reflect("id", id))
 
@@ -58,11 +70,7 @@ func (r *ProductRepositoy) GetBySKU(sku int) (*models.Product, error) {
 
 	var product = &models.Product{}
 	err := r.db.Where(&models.Product{SKU: sku}).First(&product).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		log.Println("Product Kaydi yok")
-	}
 	if err != nil {
-
 		return nil, err
 	}
 
@@ -73,10 +81,8 @@ func (r *ProductRepositoy) GetByCatName(catName string) (*[]models.Product, erro
 	zap.L().Debug("product.repo.getByCatName", zap.Reflect("CategoryName", catName))
 
 	var product = &[]models.Product{}
+	
 	err := r.db.Where(&models.Product{CategoryName: catName}).Find(&product).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		log.Println("Product Kaydi yok")
-	}
 	if err != nil {
 
 		return nil, err

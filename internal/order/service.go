@@ -10,7 +10,6 @@ import (
 	"github.com/gcamlicali/tradeshopExample/internal/product"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 	"time"
 )
@@ -61,7 +60,6 @@ func (c *orderService) Create(userID uuid.UUID) (*models.Order, error) {
 	for _, cartItem := range cartItems {
 		product, _ := c.pRepo.GetBySKU(cartItem.ProductSKU)
 		if cartItem.Quantity > int(product.UnitStock) {
-			log.Println("CartItemQuantity: ", cartItem.Quantity, " Product Quantity: ", product.UnitStock)
 			return nil, httpErr.NewRestError(http.StatusBadRequest, "Not Enough Stock", cartItem.Product.Name)
 		}
 	}

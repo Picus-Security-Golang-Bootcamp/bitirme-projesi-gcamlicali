@@ -7,7 +7,6 @@ import (
 	"github.com/gcamlicali/tradeshopExample/internal/product"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 )
 
@@ -42,12 +41,12 @@ func (c *cartService) Get(userID uuid.UUID) (*models.Cart, error) {
 //Add item to cart
 func (c *cartService) Add(userID uuid.UUID, ProductSKU int) (*models.Cart, error) {
 
-	cart, err := c.crepo.GetByUserID(userID) // duzelt kontrol edilecek bu error
+	cart, err := c.crepo.GetByUserID(userID)
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart get error", err.Error())
 	}
 
-	product, err := c.prepo.GetBySKU(ProductSKU) // duzelt kontrol edilecek bu error
+	product, err := c.prepo.GetBySKU(ProductSKU)
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
 	}
@@ -61,9 +60,6 @@ func (c *cartService) Add(userID uuid.UUID, ProductSKU int) (*models.Cart, error
 			return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart get error", err.Error())
 		}
 	}
-	if cartItem != nil {
-		log.Println("cartitem bulundu: ", cartItem.ProductSKU)
-	}
 
 	// If item exists in cart, increase item quantity by 1
 	if cartItem != nil {
@@ -76,7 +72,6 @@ func (c *cartService) Add(userID uuid.UUID, ProductSKU int) (*models.Cart, error
 		}
 
 		cart.TotalPrice = c.calculateCartPrice(cart)
-		log.Println("cartTotalPrice: ", cart.TotalPrice)
 
 		_, err := c.crepo.Update(cart)
 		if err != nil {
@@ -106,9 +101,8 @@ func (c *cartService) Add(userID uuid.UUID, ProductSKU int) (*models.Cart, error
 		}
 
 		cart.CartItems = append(cart.CartItems, *addItem)
-
 		cart.TotalPrice = c.calculateCartPrice(cart) + newCartItem.Price
-		log.Println("cartTotalPrice: ", cart.TotalPrice)
+
 		newCart, err := c.crepo.Update(cart)
 		if err != nil {
 			return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart update error", err.Error())
@@ -180,7 +174,7 @@ func (c *cartService) Delete(userID uuid.UUID, ProductSKU int) (*models.Cart, er
 		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Cart update error", err.Error())
 	}
 
-	newCart, err := c.crepo.GetByUserID(userID) // duzelt kontrol edilecek bu error
+	newCart, err := c.crepo.GetByUserID(userID)
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Get Cart error", err.Error())
 	}
@@ -194,9 +188,8 @@ func (c *cartService) calculateCartPrice(cart *models.Cart) int {
 	var totalPrice int
 
 	for _, cartItem := range cartItems {
-		log.Println("CartItemPrice: ", cartItem.Price)
 		totalPrice += cartItem.Price
 	}
-	log.Println("TotalPrice: ", totalPrice)
+
 	return totalPrice
 }
