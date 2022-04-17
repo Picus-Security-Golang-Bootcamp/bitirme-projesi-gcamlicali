@@ -7,6 +7,10 @@
 
 ## Usage
 
+Please use docs/shop.yaml file on editor.swagger.io for REST command details
+
+
+## Run Program
 ```sh
 go run main.go
 ```
