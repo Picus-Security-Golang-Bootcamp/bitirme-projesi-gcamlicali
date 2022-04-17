@@ -51,14 +51,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/product/signed/singleItem",
+							"raw": "{{baseURL}}/product/signed/addSingle",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"product",
 								"signed",
-								"singleItem"
+								"addSingle"
 							]
 						}
 					},
@@ -71,7 +71,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTY0OTg5MTA4MCwiaWF0IjoxNjQ5ODA0NjgwLCJpc3MiOiIiLCJyb2xlcyI6dHJ1ZSwidXNlcklkIjoxfQ.eqBq2X22Dd2ecqEXMus-ETC2okbSdjtKu2ISxJzrvFE",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTY1MDA2MjM0MCwiaWF0IjoxNjQ5OTc1OTQwLCJpc3MiOiIiLCJyb2xlcyI6dHJ1ZSwidXNlcklkIjoxfQ.Qh5VgzGaLF942_MRpRSdS3twiUJpP2-T02XQ0386MME",
 								"type": "text"
 							}
 						],
@@ -86,16 +86,109 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseURL}}/product/signed/bulkItems",
+							"raw": "{{baseURL}}/product/signed/addBulk",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"product",
 								"signed",
-								"bulkItems"
+								"addBulk"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTY1MDExNzIwMSwiaWF0IjoxNjUwMDMwODAxLCJpc3MiOiIiLCJyb2xlcyI6dHJ1ZSwidXNlcklkIjoxfQ.m7oUlyJYWUXr1SM8UIRoXe8aeeRGZv-yzdKOjZOk7oA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"patates\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/product/signed/1000001",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"product",
+								"signed",
+								"1000001"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTY1MDExNzIwMSwiaWF0IjoxNjUwMDMwODAxLCJpc3MiOiIiLCJyb2xlcyI6dHJ1ZSwidXNlcklkIjoxfQ.m7oUlyJYWUXr1SM8UIRoXe8aeeRGZv-yzdKOjZOk7oA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/product/signed/13000001",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"product",
+								"signed",
+								"13000001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by Name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/product/name/iphone",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"product",
+								"name",
+								"iphone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By SKU",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}
@@ -161,7 +254,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTY0OTUwMDU0MiwiaWF0IjoxNjQ5NDE0MTQyLCJpc3MiOiIiLCJyb2xlcyI6dHJ1ZSwidXNlcklkIjoxfQ.NZ1iR7zml8RaMmHWVsI0_Zcbv2jv0q5KdI74RT2Cag8",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFobWV0QGNpdmNpdi5jb20iLCJleHAiOjE2NTAxNDA3NDYsImlhdCI6MTY1MDA1NDM0NiwiaXNzIjoiIiwicm9sZXMiOmZhbHNlLCJ1c2VySWQiOjJ9.XoZftf5csWSq3hgJVvHWvm68Xodw3H9fCsePYyZKNiU",
 								"type": "text"
 							}
 						],
@@ -176,14 +269,14 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseURL}}/category/signed/bulkItems",
+							"raw": "{{baseURL}}/category/signed/addBulk",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"category",
 								"signed",
-								"bulkItems"
+								"addBulk"
 							]
 						}
 					},
@@ -227,14 +320,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/category/signed/singleItem",
+							"raw": "{{baseURL}}/category/signed/addSingle",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"category",
 								"signed",
-								"singleItem"
+								"addSingle"
 							]
 						}
 					},
@@ -249,13 +342,12 @@
 					"name": "Get",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"url": null
+						"header": []
 					},
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "Add to Cart",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -280,6 +372,112 @@
 									"value": null,
 									"disabled": true
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quantity\":5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Item",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTY1MDAyNTM5OSwiaWF0IjoxNjQ5OTM4OTk5LCJpc3MiOiIiLCJyb2xlcyI6dHJ1ZSwidXNlcklkIjoxfQ.mHtsH0tA_FC90dGyTf9Hwo_--_DBvgI6dLJvPFquTYM",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/cart/3",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Get",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Add",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/order/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"order",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/order/5",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"order",
+								"5"
 							]
 						}
 					},
