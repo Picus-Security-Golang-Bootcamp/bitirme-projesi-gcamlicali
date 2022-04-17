@@ -8,14 +8,15 @@ import (
 	"github.com/gcamlicali/tradeshopExample/internal/models"
 	csvRead "github.com/gcamlicali/tradeshopExample/pkg/csv"
 	"gorm.io/gorm"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"strconv"
 )
 
 type productService struct {
-	pRepo   *ProductRepositoy
-	catRepo *category.CategoryRepositoy
+	pRepo   IProductRepository
+	catRepo category.ICategoryRepository
 }
 
 type Service interface {
@@ -28,11 +29,11 @@ type Service interface {
 	GetBySKU(SKU int) (*models.Product, error)
 }
 
-func NewProductService(pRepo *ProductRepositoy, catRepo *category.CategoryRepositoy) Service {
+func NewProductService(pRepo IProductRepository, catRepo category.ICategoryRepository) Service {
 	return &productService{pRepo: pRepo, catRepo: catRepo}
 }
 
-func (p *productService) AddBulk(file multipart.File) error {
+func (p productService) AddBulk(file multipart.File) error {
 	record, err := csvRead.ReadFile(file)
 
 	if err != nil {
@@ -68,7 +69,7 @@ func (p *productService) AddBulk(file multipart.File) error {
 		}
 		proEntity.UnitStock = int32(unitStock)
 
-		_, err = p.pRepo.create(&proEntity)
+		_, err = p.pRepo.Create(&proEntity)
 		if err != nil {
 			//c.JSON(httpErr.ErrorResponse(httpErr.NewRestError(http.StatusBadRequest, err.Error(), nil)))
 			continue
@@ -79,15 +80,19 @@ func (p *productService) AddBulk(file multipart.File) error {
 }
 
 func (p productService) AddSingle(product api.Product) (*models.Product, error) {
-	category, err := p.catRepo.GetByName(*product.Name)
+	cat, err := p.catRepo.GetByName(*product.CategoryName)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, httpErr.NewRestError(http.StatusBadRequest, "Category not found", err.Error())
+	}
 	if err != nil {
-		return nil, httpErr.NewRestError(http.StatusNotFound, "Category not found", err.Error())
+		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Can not get product product", err.Error())
 	}
 
 	prod := responseToProduct(&product)
-	prod.CategoryName = *category.Name
 
-	NewProduct, err := p.pRepo.create(prod)
+	prod.CategoryName = *cat.Name
+
+	NewProduct, err := p.pRepo.Create(prod)
 	if err != nil {
 		return nil, httpErr.NewRestError(http.StatusInternalServerError, "Can not create new product", err.Error())
 	}
@@ -97,7 +102,7 @@ func (p productService) AddSingle(product api.Product) (*models.Product, error) 
 
 func (p productService) GetAll(pageIndex, pageSize int) (*[]models.Product, int, error) {
 
-	products, count, err := p.pRepo.getAll(pageIndex, pageSize)
+	products, count, err := p.pRepo.GetAll(pageIndex, pageSize)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -106,7 +111,7 @@ func (p productService) GetAll(pageIndex, pageSize int) (*[]models.Product, int,
 }
 
 func (p productService) Delete(SKU int) error {
-	err := p.pRepo.deleteBySku(SKU)
+	err := p.pRepo.Delete(SKU)
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return httpErr.NewRestError(http.StatusBadRequest, "Product not found", err.Error())
@@ -133,8 +138,8 @@ func (p productService) Update(SKU int, reqProduct *api.ProductUp) (*models.Prod
 	}
 	if reqProduct.CategoryName != "" {
 		//check category name of product
-		cat, _ := p.catRepo.GetByName(reqProduct.CategoryName)
-		if cat == nil {
+		_, err := p.catRepo.GetByName(reqProduct.CategoryName)
+		if err != nil {
 			return nil, httpErr.NewRestError(http.StatusBadRequest, "Product category name not found", err.Error())
 		}
 
@@ -148,6 +153,11 @@ func (p productService) Update(SKU int, reqProduct *api.ProductUp) (*models.Prod
 		product.Price = int(reqProduct.Price)
 	}
 	if reqProduct.Sku != 0 {
+		pro, err := p.pRepo.GetBySKU(int(reqProduct.Sku))
+		if err == nil {
+			return nil, httpErr.NewRestError(http.StatusBadRequest, "Product SKU already exist", nil)
+		}
+		log.Println(pro)
 		product.SKU = int(reqProduct.Sku)
 	}
 	if reqProduct.UnitStock != 0 {

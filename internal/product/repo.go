@@ -10,11 +10,20 @@ type ProductRepositoy struct {
 	db *gorm.DB
 }
 
+type IProductRepository interface {
+	Create(a *models.Product) (*models.Product, error)
+	GetAll(pageIndex, pageSize int) (*[]models.Product, int, error)
+	GetByName(name string) (*[]models.Product, error)
+	GetBySKU(sku int) (*models.Product, error)
+	Update(a *models.Product) (*models.Product, error)
+	Delete(sku int) error
+}
+
 func NewProductRepository(db *gorm.DB) *ProductRepositoy {
 	return &ProductRepositoy{db: db}
 }
 
-func (r *ProductRepositoy) create(a *models.Product) (*models.Product, error) {
+func (r *ProductRepositoy) Create(a *models.Product) (*models.Product, error) {
 	zap.L().Debug("product.repo.create", zap.Reflect("productBody", a))
 	if err := r.db.Create(a).Error; err != nil {
 		zap.L().Error("product.repo.Create failed to create product", zap.Error(err))
@@ -23,7 +32,7 @@ func (r *ProductRepositoy) create(a *models.Product) (*models.Product, error) {
 	return a, nil
 }
 
-func (r *ProductRepositoy) getAll(pageIndex, pageSize int) (*[]models.Product, int, error) {
+func (r *ProductRepositoy) GetAll(pageIndex, pageSize int) (*[]models.Product, int, error) {
 	zap.L().Debug("product.repo.getAll")
 
 	var ps = &[]models.Product{}
@@ -53,38 +62,12 @@ func (r *ProductRepositoy) GetByName(name string) (*[]models.Product, error) {
 	return products, nil
 }
 
-func (r *ProductRepositoy) GetByID(id int) (*models.Product, error) {
-	zap.L().Debug("product.repo.getByID", zap.Reflect("id", id))
-
-	var product = &models.Product{}
-	err := r.db.First(&product, id).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return product, nil
-}
-
 func (r *ProductRepositoy) GetBySKU(sku int) (*models.Product, error) {
 	zap.L().Debug("product.repo.getBySKU", zap.Reflect("SKU", sku))
 
 	var product = &models.Product{}
 	err := r.db.Where(&models.Product{SKU: sku}).First(&product).Error
 	if err != nil {
-		return nil, err
-	}
-
-	return product, nil
-}
-
-func (r *ProductRepositoy) GetByCatName(catName string) (*[]models.Product, error) {
-	zap.L().Debug("product.repo.getByCatName", zap.Reflect("CategoryName", catName))
-
-	var product = &[]models.Product{}
-	
-	err := r.db.Where(&models.Product{CategoryName: catName}).Find(&product).Error
-	if err != nil {
-
 		return nil, err
 	}
 
@@ -101,32 +84,7 @@ func (r *ProductRepositoy) Update(a *models.Product) (*models.Product, error) {
 	return a, nil
 }
 
-func (r *ProductRepositoy) Delete(p *models.Product) error {
-	zap.L().Debug("product.repo.delete", zap.Reflect("product", p))
-
-	if result := r.db.Delete(p); result.Error != nil {
-		return result.Error
-	}
-
-	return nil
-}
-
-func (r *ProductRepositoy) DeleteById(id int) error {
-	zap.L().Debug("product.repo.delete", zap.Reflect("id", id))
-
-	product, err := r.GetByID(id)
-	if err != nil {
-		return err
-	}
-
-	if result := r.db.Delete(&product); result.Error != nil {
-		return result.Error
-	}
-
-	return nil
-}
-
-func (r *ProductRepositoy) deleteBySku(sku int) error {
+func (r *ProductRepositoy) Delete(sku int) error {
 	zap.L().Debug("product.repo.deleteBySku", zap.Reflect("SKU", sku))
 
 	product, err := r.GetBySKU(sku)

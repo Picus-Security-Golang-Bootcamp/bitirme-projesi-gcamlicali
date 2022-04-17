@@ -11,9 +11,9 @@ import (
 )
 
 type cartService struct {
-	crepo  *CartRepositoy
-	cirepo *cart_item.CartItemRepositoy
-	prepo  *product.ProductRepositoy
+	crepo  ICartRepository
+	cirepo cart_item.ICartItemRepository
+	prepo  product.IProductRepository
 }
 
 type Service interface {
@@ -23,7 +23,7 @@ type Service interface {
 	Delete(userID uuid.UUID, ProductID int) (*models.Cart, error)
 }
 
-func NewCartService(crepo *CartRepositoy, cirepo *cart_item.CartItemRepositoy, prepo *product.ProductRepositoy) Service {
+func NewCartService(crepo ICartRepository, cirepo cart_item.ICartItemRepository, prepo product.IProductRepository) Service {
 	return &cartService{crepo: crepo, cirepo: cirepo, prepo: prepo}
 }
 
@@ -187,7 +187,7 @@ func (c *cartService) calculateCartPrice(cart *models.Cart) int {
 
 	var totalPrice int
 
-	for _, cartItem := range cartItems {
+	for _, cartItem := range *cartItems {
 		totalPrice += cartItem.Price
 	}
 

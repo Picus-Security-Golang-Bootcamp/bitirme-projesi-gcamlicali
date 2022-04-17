@@ -11,6 +11,13 @@ type OrderRepositoy struct {
 	db *gorm.DB
 }
 
+type IOrderRepository interface {
+	Create(a *models.Order) (*models.Order, error)
+	GetByOrderAndUserID(userID uuid.UUID, orderID uuid.UUID) (*models.Order, error)
+	GetByUserID(userID uuid.UUID) (*[]models.Order, error)
+	Update(a *models.Order) (*models.Order, error)
+}
+
 func NewOrderRepository(db *gorm.DB) *OrderRepositoy {
 	return &OrderRepositoy{db: db}
 }

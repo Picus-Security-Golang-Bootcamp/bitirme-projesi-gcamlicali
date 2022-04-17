@@ -12,6 +12,12 @@ type CartRepositoy struct {
 	db *gorm.DB
 }
 
+type ICartRepository interface {
+	Create(a *models.Cart) (*models.Cart, error)
+	GetByUserID(userID uuid.UUID) (*models.Cart, error)
+	Update(a *models.Cart) (*models.Cart, error)
+}
+
 func NewCartRepository(db *gorm.DB) *CartRepositoy {
 	return &CartRepositoy{db: db}
 }

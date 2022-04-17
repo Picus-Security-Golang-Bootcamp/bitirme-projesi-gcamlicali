@@ -99,7 +99,7 @@ func main() {
 
 	authRepo := auth.NewAuthRepository(DB)
 	authRepo.Migration()
-	authService := auth.NewAuthService(*authRepo, *cartRepo, cfg)
+	authService := auth.NewAuthService(authRepo, cartRepo, cfg)
 	authService.FillAdminData()
 	auth.NewAuthHandler(authRooter, authService)
 

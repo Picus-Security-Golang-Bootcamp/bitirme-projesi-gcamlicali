@@ -17,8 +17,8 @@ import (
 
 type authService struct {
 	cfg   *config.Config
-	repo  AuthRepositoy
-	cRepo cart.CartRepositoy
+	repo  IAuthRepository
+	cRepo cart.ICartRepository
 }
 
 type Service interface {
@@ -27,14 +27,14 @@ type Service interface {
 	FillAdminData()
 }
 
-func NewAuthService(repo AuthRepositoy, cRepo cart.CartRepositoy, cfg *config.Config) Service {
+func NewAuthService(repo IAuthRepository, cRepo cart.ICartRepository, cfg *config.Config) Service {
 	return &authService{repo: repo, cRepo: cRepo, cfg: cfg}
 }
 
 func (a *authService) SignIn(login *api.Login) (string, error) {
 
 	//Find user by api response mail in DB
-	user, err := a.repo.getByMail(*login.Email)
+	user, err := a.repo.GetByMail(*login.Email)
 	if err != nil {
 		return "", httpErr.NewRestError(http.StatusBadRequest, "User get err", err.Error())
 	}
@@ -73,7 +73,7 @@ func (a *authService) SignUp(login *api.User) (string, error) {
 	login.Password = &passBeforeReg
 
 	//Create  api response based user
-	createdUser, err := a.repo.create(userApiToModel(login))
+	createdUser, err := a.repo.Create(userApiToModel(login))
 	if err != nil {
 		return "", httpErr.NewRestError(http.StatusInternalServerError, "Can't create user", err.Error())
 	}

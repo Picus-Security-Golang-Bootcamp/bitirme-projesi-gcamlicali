@@ -1,7 +1,6 @@
 package order
 
 import (
-	"database/sql"
 	"errors"
 	"github.com/gcamlicali/tradeshopExample/internal/cart"
 	"github.com/gcamlicali/tradeshopExample/internal/cart_item"
@@ -20,10 +19,10 @@ var (
 )
 
 type orderService struct {
-	orRepo *OrderRepositoy
-	cRepo  *cart.CartRepositoy
-	ciRepo *cart_item.CartItemRepositoy
-	pRepo  *product.ProductRepositoy
+	orRepo IOrderRepository
+	cRepo  cart.ICartRepository
+	ciRepo cart_item.ICartItemRepository
+	pRepo  product.IProductRepository
 }
 
 type Service interface {
@@ -32,7 +31,7 @@ type Service interface {
 	Cancel(userID uuid.UUID, orderID uuid.UUID) error
 }
 
-func NewOrderService(orRepo *OrderRepositoy, cRepo *cart.CartRepositoy, ciRepo *cart_item.CartItemRepositoy, pRepo *product.ProductRepositoy) Service {
+func NewOrderService(orRepo IOrderRepository, cRepo cart.ICartRepository, ciRepo cart_item.ICartItemRepository, pRepo product.IProductRepository) Service {
 	return &orderService{orRepo: orRepo, cRepo: cRepo, ciRepo: ciRepo, pRepo: pRepo}
 }
 
@@ -57,7 +56,7 @@ func (c *orderService) Create(userID uuid.UUID) (*models.Order, error) {
 
 	//Check cartItems quantity
 	cartItems, err := c.ciRepo.GetByCartID(cart.ID)
-	for _, cartItem := range cartItems {
+	for _, cartItem := range *cartItems {
 		product, _ := c.pRepo.GetBySKU(cartItem.ProductSKU)
 		if cartItem.Quantity > int(product.UnitStock) {
 			return nil, httpErr.NewRestError(http.StatusBadRequest, "Not Enough Stock", cartItem.Product.Name)
@@ -78,7 +77,7 @@ func (c *orderService) Create(userID uuid.UUID) (*models.Order, error) {
 	}
 
 	//Change ordered products quantity
-	for _, cartItem := range cartItems {
+	for _, cartItem := range *cartItems {
 		product, _ := c.pRepo.GetBySKU(cartItem.ProductSKU)
 		product.UnitStock -= int32(cartItem.Quantity)
 		_, err = c.pRepo.Update(product)
@@ -107,7 +106,7 @@ func (c *orderService) Cancel(userID uuid.UUID, orderID uuid.UUID) error {
 
 	//Get given order by user and order ID
 	order, err := c.orRepo.GetByOrderAndUserID(userID, orderID)
-	if errors.Is(err, sql.ErrNoRows) {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return httpErr.NewRestError(http.StatusNotFound, "Order not found", err.Error())
 	}
 
@@ -120,7 +119,7 @@ func (c *orderService) Cancel(userID uuid.UUID, orderID uuid.UUID) error {
 	now := time.Now()
 
 	if now.After(orderExpireDate) {
-		return httpErr.NewRestError(http.StatusBadRequest, "Order cancel date expired", "You can not cancel your order!")
+		return httpErr.NewRestError(http.StatusBadRequest, "You can not cancel your order!", "Order cancel date expired")
 	}
 
 	//Set order status cancelled
@@ -136,7 +135,7 @@ func (c *orderService) Cancel(userID uuid.UUID, orderID uuid.UUID) error {
 		return httpErr.NewRestError(http.StatusInternalServerError, "Get cart items Error", err.Error())
 	}
 
-	for _, cartItem := range cartItems {
+	for _, cartItem := range *cartItems {
 		product, _ := c.pRepo.GetBySKU(cartItem.ProductSKU)
 		product.UnitStock += int32(cartItem.Quantity)
 		_, err = c.pRepo.Update(product)
